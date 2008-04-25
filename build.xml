@@ -96,7 +96,7 @@
 	   destdir="${doc.dir}/api"
        extdirs="${lib.dir}"
 	   classpathref="build.class.path"
-	   packagenames="org.stripesstuff.stripersist.*"
+	   packagenames="org.stripesstuff.plugin.*"
        stylesheetfile="${src.dir}/javadoc.css"
        overview="${src.dir}/overview.html"
        windowtitle="${product.name} ${product.version} API Documentation"
