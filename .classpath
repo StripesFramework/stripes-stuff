@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="plugins/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/mail.jar"/>
-	<classpathentry kind="lib" path="lib/stripes.jar"/>
-	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="plugins/lib/mail.jar"/>
+	<classpathentry kind="lib" path="plugins/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="plugins/lib/stripes.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
