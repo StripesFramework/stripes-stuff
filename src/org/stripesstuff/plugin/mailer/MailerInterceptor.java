@@ -25,7 +25,7 @@ public class MailerInterceptor implements Interceptor
 				break;
 		}
 
-		return null;
+		return executionContext.proceed();
 	}
 
 	public static ExecutionContext getExecutionContext()
