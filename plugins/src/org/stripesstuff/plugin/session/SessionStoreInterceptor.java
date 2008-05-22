@@ -1,6 +1,4 @@
 /*
- * <p>Title: StripesStuff</p>
- * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2007</p>
  * <p>Company: Institut de recherches cliniques de Montréal (http://www.ircm.qc.ca)</p>
  */
@@ -9,7 +7,6 @@ package org.stripesstuff.plugin.session;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,10 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionActivationListener;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.http.HttpSessionEvent;
 
 import org.stripesstuff.plugin.session.Session;
 
@@ -45,6 +38,11 @@ public class SessionStoreInterceptor implements Interceptor {
     
     /** Lazily filled in map of Class to fields annotated with Session. */
     private static Map<Class<?>, Collection<Field>> fieldMap = new ConcurrentHashMap<Class<?>, Collection<Field>>();
+    
+    /**
+     * Session attribute where map linking MaxTimeSaverThreads to keys is stored.
+     */
+    private static final String MAPPER_ATTRIBUTE = SessionStoreInterceptor.class + "#mapper";
     
     /* (non-Javadoc)
      * @see net.sourceforge.stripes.controller.Interceptor#intercept(net.sourceforge.stripes.controller.ExecutionContext)
@@ -102,7 +100,7 @@ public class SessionStoreInterceptor implements Interceptor {
             }
             if (!parameters.contains(field.getName())) {
                 // Replace value.
-                Object value = getAttribute(session, getFieldKey(field, actionBean.getClass()));
+                Object value = session.getAttribute(getFieldKey(field, actionBean.getClass()));
                 // If value is null and field is primitive, don't set value.
                 if (!(value == null && field.getType().isPrimitive())) {
                     field.set(actionBean, value);
@@ -176,15 +174,11 @@ public class SessionStoreInterceptor implements Interceptor {
      * Returns an object in session.
      * @param key Key under which object is saved.
      * @return Object.
+     * @deprecated Use {@link HttpSession#getAttribute(String)} instead.
      */
+    @Deprecated
     public static Object getAttribute(HttpSession session, String key) {
-        Object o = session.getAttribute(key);
-        if (o instanceof MaxTimeSaver) {
-            return ((MaxTimeSaver)o).o;
-        }
-        else {
-            return o;
-        }
+        return session.getAttribute(key);
     }
     /**
      * Saves an object in session for latter use.
@@ -198,133 +192,47 @@ public class SessionStoreInterceptor implements Interceptor {
     protected Object setAttribute(HttpSession session, String key, Object object, boolean serializable, int maxTime) {
         if (object == null) {
             // If object is null, remove attribute.
-            Object ret = session.getAttribute(key);
-            session.removeAttribute(key);
-            return ret;
-        }
-        else if (serializable && object instanceof Serializable) {
-            Object ret = session.getAttribute(key);
-            session.setAttribute(key, new MaxTimeSaver(object, maxTime));
+            Object ret;
+            synchronized (session) {
+                ret = session.getAttribute(key);
+                session.removeAttribute(key);
+            }
             return ret;
         }
         else {
-            Object ret = session.getAttribute(key);
-            session.setAttribute(key, new NoSerializeSaver(object, maxTime));
+            // Set object in session.
+            Object ret;
+            synchronized (session) {
+               ret = session.getAttribute(key);
+                session.setAttribute(key, object);
+            }
+            @SuppressWarnings("unchecked")
+            SessionMapper mapper = (SessionMapper) session.getAttribute(MAPPER_ATTRIBUTE);
+            if (mapper == null) {
+                // Register mapper for session.
+                mapper = new SessionMapper();
+                session.setAttribute(MAPPER_ATTRIBUTE, mapper);
+            }
+            synchronized (mapper) {
+                // Update field mapper.
+                SessionFieldMapper fieldMapper = mapper.get(key);
+                if (fieldMapper == null) {
+                    fieldMapper = new SessionFieldMapper(serializable && object instanceof Serializable);
+                    mapper.put(key, fieldMapper);
+                }
+                if (maxTime > 0) {
+                    // Register runnable to remove attribute.
+                    if (fieldMapper.runnable != null) {
+                        // Cancel old runnable because a new one will be created.
+                        fieldMapper.runnable.cancel();
+                    }
+                    // Register runnable.
+                    RemoveFieldRunnable runnable = new RemoveFieldRunnable(key, maxTime, session);
+                    fieldMapper.runnable = runnable;
+                    (new Thread(runnable)).start();
+                }
+            }
             return ret;
-        }
-    }
-    
-    
-    /**
-     * Used to store non-serializable objects into session.
-     * @author Christian Poitras
-     */
-    private class NoSerializeSaver extends MaxTimeSaver implements HttpSessionActivationListener {
-        /**
-         * Creates a NoSerializeSaver with no maximum time.
-         * @param o Object to store.
-         */
-        NoSerializeSaver(Object o) {
-            super(o, -1);
-        }
-        /**
-         * Creates a NoSerializeSaver with maximum time.
-         * @param o Object to store.
-         */
-        NoSerializeSaver(Object o, int maxTime) {
-            super(o, maxTime);
-        }
-        public void sessionDidActivate(HttpSessionEvent event) {
-        }
-        /**
-         * Remove object from session to prevent serialization.
-         */
-        public void sessionWillPassivate(HttpSessionEvent event) {
-            event.getSession().removeAttribute(key);
-        }
-    }
-    /**
-     * Used to store objects in session for a limited time.
-     * @author Christian Poitras
-     */
-    private class MaxTimeSaver implements HttpSessionBindingListener {
-        /**
-         * Key under which object is bound.
-         */
-        String key;
-        /**
-         * Bounded object.
-         */
-        Object o;
-        /**
-         * Maximum time in session.
-         */
-        int maxTime;
-        /**
-         * Session where object is stored.
-         */
-        HttpSession session;
-        /**
-         * Deleter thread.
-         */
-        Deleter deleter;
-        /**
-         * Creates a MaxTimeSaver.
-         * @param o Object to store.
-         * @param maxTime Maximum number of minutes in session.
-         */
-        MaxTimeSaver(Object o, int maxTime) {
-            this.o = o;
-            this.maxTime = maxTime;
-        }
-        /**
-         * Start deleter thread.
-         */
-        public void valueBound(HttpSessionBindingEvent event) {
-            key = event.getName();
-            session = event.getSession();
-            if (maxTime > 0) {
-                deleter = new Deleter();
-                Thread t = new Thread(deleter);
-                t.start();
-            }
-        }
-        /**
-         * Stop deleter thread.
-         */
-        public void valueUnbound(HttpSessionBindingEvent event) {
-            if (maxTime > 0) {
-                deleter.cancel();
-                deleter = null;
-            }
-        }
-        /**
-         * Remove an object in session after a certain time.
-         * @author Christian Poitras
-         */
-        private class Deleter implements Runnable {
-            private Date endTime;
-            private boolean cancel;
-            public void run() {
-                if (maxTime < 0) {
-                    return;
-                }
-                long timeMillis = (long)maxTime * 60 * 1000;
-                endTime = new Date((new Date()).getTime() + timeMillis);
-                while (!cancel && endTime.after(new Date())) {
-                    try {
-                        Thread.sleep(1000);
-                    }
-                    catch (InterruptedException e) {
-                    }
-                }
-                if (!cancel && !endTime.after(new Date())) {
-                    session.removeAttribute(key);
-                }
-            }
-            protected void cancel() {
-                cancel = true;
-            }
         }
     }
 }
