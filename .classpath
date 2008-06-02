@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="plugins/src"/>
+	<classpathentry kind="src" path="tests/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="plugins/lib/mail.jar"/>
 	<classpathentry kind="lib" path="plugins/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="plugins/lib/stripes.jar"/>
+	<classpathentry kind="lib" path="tests/lib/testng-5.7-jdk15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

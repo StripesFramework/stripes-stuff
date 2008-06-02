@@ -10,6 +10,9 @@
   <property name="dist.dir"    value="dist"/>
   <property name="lib.dir"     value="plugins/lib"/>
   <property name="example.dir" value="examples"/>
+  <property name="test.dir"    value="tests"/>
+  <property name="test.lib.dir" value="tests/lib"/>
+  <property name="test.out.dir" value="test-output"/>
   <property name="zip.prefix"   value="${product.jar}-${product.version}"/>
   <property name="zip.file"     value="${zip.prefix}.zip"/>
 
@@ -18,6 +21,8 @@
   <!-- =================================================================== -->
   <path id="build.class.path">
     <pathelement location="${classes.dir}"/>
+    <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    <fileset dir="${test.lib.dir}" includes="**/*.jar"/>
   </path>
 
   <target name="init" description="Creates directories needed by the build system.">
@@ -50,8 +55,12 @@
   <!-- classpath.                                                          -->
   <!-- =================================================================== -->
   <target name="compile" depends="init" description="Compiles the java code for ${product.name}.">
-    <javac target="1.5" destdir="${classes.dir}" extdirs="${lib.dir}" debug="on">
+    <javac target="1.5" destdir="${classes.dir}" debug="on">
       <src path="${src.dir}"/>
+      <classpath refid="build.class.path"/>
+    </javac>
+    <javac target="1.5" destdir="${classes.dir}" debug="on">
+      <src path="${test.dir}"/>
       <classpath refid="build.class.path"/>
     </javac>
   </target>
@@ -61,6 +70,7 @@
   <!-- =================================================================== -->
   <target name="jar" depends="compile" description="Builds the ${product.jar}-${product.version}.jar library file.">
     <jar destfile="${dist.dir}/${product.jar}-${product.version}.jar" basedir="${classes.dir}">
+      <include name="org/stripesstuff/plugin/**"/>
       <manifest>
           <attribute name="Implementation-Title" value="${product.name}"/>
           <attribute name="Specification-Version" value="${product.version}"/>
@@ -127,4 +137,24 @@
             <zipfileset dir="." includes="license.txt" prefix="${zip.prefix}"/>
         </zip>
 	</target>  
+    
+    <!-- =================================================================== -->
+    <!-- Execute StripesStuff unit tests.                                    -->
+    <!-- =================================================================== -->
+    <target name="test" depends="compile"
+        description="Run TestNG tests">
+        <javac target="1.5" destdir="${classes.dir}" debug="on">
+            <src path="${src.dir}"/>
+        </javac>
+        <taskdef resource="testngtasks" classpathref="build.class.path"/>
+        
+        <delete dir="${test.out.dir}"/>
+        
+        <testng classpathref="build.class.path" outputdir="${test.out.dir}" excludedgroups="long">
+            <classfileset dir="${classes.dir}">
+                <include name="**/*.class"/>
+            </classfileset>
+        </testng>
+        
+    </target>
 </project>
