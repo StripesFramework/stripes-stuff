@@ -26,7 +26,7 @@ public class SessionMapper extends HashMap<String, SessionFieldMapper> implement
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
         for (SessionFieldMapper fieldMapper : this.values()) {
-            if (fieldMapper.runnable == null) fieldMapper.runnable.cancel();
+            if (fieldMapper.runnable != null) fieldMapper.runnable.cancel();
         }
     }
     public void valueBound(HttpSessionBindingEvent event) {

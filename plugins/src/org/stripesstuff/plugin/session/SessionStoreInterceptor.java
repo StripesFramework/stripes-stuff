@@ -203,7 +203,7 @@ public class SessionStoreInterceptor implements Interceptor {
             // Set object in session.
             Object ret;
             synchronized (session) {
-               ret = session.getAttribute(key);
+                ret = session.getAttribute(key);
                 session.setAttribute(key, object);
             }
             @SuppressWarnings("unchecked")
