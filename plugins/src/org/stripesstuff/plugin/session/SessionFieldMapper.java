@@ -4,11 +4,16 @@
  */
 package org.stripesstuff.plugin.session;
 
+import java.io.Serializable;
+
 /**
  * Map a field to current runnable.
  * @author Christian Poitras
  */
-public class SessionFieldMapper {
+public class SessionFieldMapper implements Serializable {
+    
+    static final long serialVersionUID = 1209561911164455936L;
+    
     /**
      * Thread that will remove field from session.
      */
