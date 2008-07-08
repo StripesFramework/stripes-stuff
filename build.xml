@@ -159,8 +159,6 @@
             <!-- copy jars -->
             <zipfileset dir="${lib.dir}" includes="**/*.jar" excludes="**/servlet-api.jar" prefix="WEB-INF/lib"/>
         </war>
-        
-        <!-- Copy libraries -->
     </target>
     
     <!-- =================================================================== -->
