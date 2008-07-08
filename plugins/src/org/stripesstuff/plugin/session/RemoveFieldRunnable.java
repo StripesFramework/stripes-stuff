@@ -54,6 +54,7 @@ public class RemoveFieldRunnable implements Runnable {
                 Thread.sleep(1000);
             }
             catch (InterruptedException e) {
+                cancel = true;
             }
         }
         if (!cancel && !endTime.after(new Date())) {
