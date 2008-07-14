@@ -4,13 +4,14 @@
   <property name="properties.file" value="build.properties"/>
   <property file="${properties.file}"/>
 
-  <property name="src.dir"     value="plugins/src"/>
-  <property name="classes.dir" value="bin"/>
-  <property name="doc.dir"     value="doc"/>
-  <property name="dist.dir"    value="dist"/>
-  <property name="lib.dir"     value="plugins/lib"/>
-  <property name="example.dir" value="examples"/>
-  <property name="test.dir"    value="tests"/>
+  <property name="src.dir"      value="plugins/src"/>
+  <property name="classes.dir"  value="bin"/>
+  <property name="doc.dir"      value="doc"/>
+  <property name="dist.dir"     value="dist"/>
+  <property name="buildlib.dir" value="buildlibs"/>
+  <property name="lib.dir"      value="plugins/lib"/>
+  <property name="example.dir"  value="examples"/>
+  <property name="test.dir"     value="tests"/>
   <property name="test.lib.dir" value="tests/lib"/>
   <property name="test.out.dir" value="test-output"/>
   <property name="zip.prefix"   value="${product.jar}-${product.version}"/>
@@ -76,7 +77,8 @@
   <!-- =================================================================== -->
   <target name="jar" depends="compile" description="Builds the ${product.jar}-${product.version}.jar library file.">
     <jar destfile="${dist.dir}/${product.jar}-${product.version}.jar" basedir="${classes.dir}">
-      <include name="org/stripesstuff/plugin/**"/>
+      <exclude name="org/stripesstuff/example/**"/>
+      <exclude name="org/stripesstuff/tests/**"/>
       <manifest>
           <attribute name="Implementation-Title" value="${product.name}"/>
           <attribute name="Specification-Version" value="${product.version}"/>
@@ -90,19 +92,22 @@
     </copy>
   </target>
 
-	  <!-- =================================================================== -->
-	  <!-- Jar up the classes directory to create the library file.            -->
-	  <!-- =================================================================== -->
-	  <target name="jarSource" depends="init" description="Builds the ${product.jar}-${product.version}-source.jar library file.">
-	    <jar destfile="${dist.dir}/${product.jar}-${product.version}-source.jar" basedir="${src.dir}">
-	      <manifest>
-	          <attribute name="Implementation-Title" value="${product.name}"/>
-	          <attribute name="Specification-Version" value="${product.version}"/>
-	          <attribute name="Implementation-Version" value="${repository.version}"/>
-	          <attribute name="Implementation-URL" value="${product.url}"/>
-	      </manifest>
-	    </jar>
-	  </target>
+  <!-- =================================================================== -->
+  <!-- Jar up the classes directory to create the library file.            -->
+  <!-- =================================================================== -->
+  <target name="jarSource" depends="init" description="Builds the ${product.jar}-${product.version}-source.jar library file.">
+    <jar destfile="${dist.dir}/${product.jar}-${product.version}-source.jar" basedir="${src.dir}">
+      <exclude name="org/stripesstuff/example/**"/>
+      <exclude name="org/stripesstuff/tests/**"/>
+      <manifest>
+          <attribute name="Implementation-Title" value="${product.name}"/>
+          <attribute name="Specification-Version" value="${product.version}"/>
+          <attribute name="Implementation-Version" value="${repository.version}"/>
+          <attribute name="Implementation-URL" value="${product.url}"/>
+      </manifest>
+         <metainf dir="plugins/META-INF"/>
+    </jar>
+  </target>
 
   <!-- =================================================================== -->
   <!-- Generate the javadoc for all the sources in the project.            -->
@@ -127,6 +132,11 @@
 		<link href="http://java.sun.com/javaee/5/docs/api/"/>
 		<link href="http://stripes.sourceforge.net/docs/current/javadoc/"/>
     </javadoc>
+    <java fork="true" jar="${buildlib.dir}/tlddoc.jar" failonerror="true">
+      <arg line="-d ${doc.dir}/tagapi"/>
+      <arg value="${dist.dir}/${product.jar}-${product.version}.jar"/>
+    </java>
+
   </target>
 
   <target name="all" depends="jar,javadoc,jarSource"/>
@@ -140,6 +150,7 @@
         <zip destfile="${dist.dir}/${zip.file}">
             <zipfileset dir="." includes="src/**/*" prefix="${zip.prefix}"/>
             <zipfileset dir="${doc.dir}/api" includes="**/*" prefix="${zip.prefix}/docs/javadoc"/>
+            <zipfileset dir="${doc.dir}/tagapi" includes="**/*" prefix="${zip.prefix}/docs/tagdoc"/>
             <zipfileset dir="dist" includes="${product.jar}-${product.version}.jar" prefix="${zip.prefix}"/>
             <zipfileset dir="." includes="license.txt" prefix="${zip.prefix}"/>
         </zip>
