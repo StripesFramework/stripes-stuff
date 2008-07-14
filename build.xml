@@ -83,6 +83,7 @@
           <attribute name="Implementation-Version" value="${repository.version}"/>
           <attribute name="Implementation-URL" value="${product.url}"/>
       </manifest>
+      <metainf dir="plugins/META-INF"/>
     </jar>
     <copy todir="${example.dir}/web/WEB-INF/lib">
       <fileset dir="${dist.dir}" includes="${product.jar}-${product.version}.jar"/>
@@ -127,9 +128,9 @@
 		<link href="http://stripes.sourceforge.net/docs/current/javadoc/"/>
     </javadoc>
   </target>
-  
+
   <target name="all" depends="jar,javadoc,jarSource"/>
-  
+
     <!-- =================================================================== -->
     <!-- Builds the full StripesStuff distribution file.                          -->
     <!-- =================================================================== -->
@@ -143,14 +144,14 @@
             <zipfileset dir="." includes="license.txt" prefix="${zip.prefix}"/>
         </zip>
 	</target>
-    
+
     <!-- =================================================================== -->
     <!-- Creates war file containing StripesStuff examples.                  -->
     <!-- =================================================================== -->
     <target name="war" depends="jar"
             description="Creates war file for web examples">
         <mkdir dir="${dist.dir}/war"/>
-        
+
         <war destfile="${dist.dir}/${war.file}">
             <!-- copy web contents -->
             <zipfileset dir="${example.dir}/web" includes="**/*"/>
@@ -160,7 +161,7 @@
             <zipfileset dir="${lib.dir}" includes="**/*.jar" excludes="**/servlet-api.jar" prefix="WEB-INF/lib"/>
         </war>
     </target>
-    
+
     <!-- =================================================================== -->
     <!-- Execute StripesStuff unit tests.                                    -->
     <!-- =================================================================== -->
@@ -170,14 +171,14 @@
             <src path="${src.dir}"/>
         </javac>
         <taskdef resource="testngtasks" classpathref="build.class.path"/>
-        
+
         <delete dir="${test.out.dir}"/>
-        
+
         <testng classpathref="build.class.path" outputdir="${test.out.dir}" excludedgroups="long">
             <classfileset dir="${classes.dir}">
                 <include name="**/*.class"/>
             </classfileset>
         </testng>
-        
+
     </target>
 </project>

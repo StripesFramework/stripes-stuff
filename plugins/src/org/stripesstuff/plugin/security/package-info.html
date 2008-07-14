@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<body>
+<p>
+	Package to provide the security for the Stripes framework.
+</p>
+
+<p>
+	Like Stripes, it uses annotations instead of the traditional xml configuration. This security solution secures
+	events on action beans, as defined by the action beans themselves and decided upon by a security manager.
+	This is particularly useful for those wanting an ACL based system or tying into legacy systems using ACL based
+	security: the classes/methods declare the security, which can even depend on runtime information (for example
+	whether or not the user owns the object the event is about).
+</p>
+
+<p>
+	The security solution from this package includes a security interceptor, which enforces the decisions from the
+	security manager. An example implementation of the security manager is supplied, called {@link J2EESecurityManager},
+	that implements annotations from the {@code javax.annotation.security} package in the J2EE 5 API.
+</p>
+
+<p>
+	In addition to the interceptor, a security solution would not be complete without a way to show or hide screen
+	elements based on the decisions of the security manager. To help with this, a JSP tag is provided that takes an
+	action bean instance and an event name to determine if that event may be executed on that action bean.
+</p>
+
+<p>
+	Note however, that this security solution only affects security decisions that can be taken before an event handler
+	your action bean executes. Therefore, it does not filter collections returned by action beans. Nor does it provide a
+	JSP tag to check whether or not access to a URL is allowed, because URL's also commonly refer to other resources
+	than action beans.
+</p>
+
+<h1>Configuration</h1>
+
+<p>
+	To configure the Stripes framework to use this security solution, add the interceptor
+	({@link nl.opk.stripes.security.SecurityInterceptor}) to the interceptors used, and add the security manager class
+	to the configuration parameters. An example is displayed below, from configuration that silently uses the
+	{@link net.sourceforge.stripes.controller.BeforeAfterMethodInterceptor BeforeAfterMethodInterceptor} (as
+	documented).
+</p>
+<pre>        &lt;filter-class&gt;net.sourceforge.stripes.controller.StripesFilter&lt;/filter-class&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;Extension.Packages&lt;/param-name&gt;
+            &lt;param-value&gt;org.stripesstuff.plugin.security&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;SecurityManager.Class&lt;/param-name&gt;
+            &lt;param-value&gt;org.stripesstuff.plugin.security.J2EESecurityManager&lt;/param-value&gt;
+        &lt;/init-param&gt;</pre>
+
+<h1>Using the JSP tag</h1>
+
+<p>
+	Start by defining the tag in your JSP file:
+</p>
+<pre>    &lt;%@ taglib uri="http://www.stripes-stuff.org/security.tld" prefix="security"%&gt;</pre>
+<p>
+	This allows you to use the security tag in your JSP.
+</p>
+
+
+</body>
+</html>

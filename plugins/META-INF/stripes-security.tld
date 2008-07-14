@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+        http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd" version="2.0">
+	<description>
+		Provides tags for use with the security package for the stripes web framework.
+	</description>
+	<display-name>Stripes Tag Library - Security</display-name>
+	<tlib-version>1.0</tlib-version>
+	<short-name>security</short-name>
+	<uri>http://www.stripes-stuff.org/security.tld</uri>
+	<tag>
+		<description><![CDATA[
+            <p>Wraps pieces of a JSP page to be displayed if an event is allowed.</p>
+        ]]></description>
+		<name>allowed</name>
+		<tag-class>org.stripesstuff.plugin.security.AllowedTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description>
+				The name of the action bean to check access for. If not defined, the current action bean for the page,
+				&quot;actionBean&quot;, is used.
+			</description>
+			<name>bean</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				The name of the event to check access for. If not defined, the default event is used.
+			</description>
+			<name>event</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[
+                <p>If set to <code>true</code>, the decision of the security manager is reversed: the tag's body is shown
+	            if access is <emph>not</emph> allowed.</p>
+	            <p>NOTE: This attribute is deprecated. Use the notAllowed tag instead.</p>
+            ]]></description>
+			<name>negate</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[
+            <p>Wraps pieces of a JSP page to be displayed if an event is NOT allowed.</p>
+        ]]></description>
+		<name>notAllowed</name>
+		<tag-class>org.stripesstuff.plugin.security.NotAllowedTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description>
+				The name of the action bean to check access for. If not defined, the current action bean for the page,
+				&quot;actionBean&quot;, is used.
+			</description>
+			<name>bean</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>
+				The name of the event to check access for. If not defined, the default event is used.
+			</description>
+			<name>event</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+</taglib>
