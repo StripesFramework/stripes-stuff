@@ -8,5 +8,7 @@
 	<classpathentry kind="lib" path="plugins/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="plugins/lib/stripes.jar"/>
 	<classpathentry kind="lib" path="tests/lib/testng-5.7-jdk15.jar"/>
+	<classpathentry kind="lib" path="plugins/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="plugins/lib/jstl.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
