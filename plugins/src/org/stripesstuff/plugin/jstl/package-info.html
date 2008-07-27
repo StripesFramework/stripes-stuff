@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<body>
+<p>
+	JSTL Bundle PLugin &mdash; Package to provide easy localization for a web application.
+</p>
+
+<p>
+	Stripes has some localization, but only for error messages and field names. If you want more, you can use the
+	ubiquitous JSTL formatting tags. You can even configure it in your <code>web.xml</code>:
+</p>
+<pre>    &lt;config-param&gt;
+        &lt;param-name&gt;javax.servlet.jsp.jstl.fmt.LocalizationContext&lt;/param-name&gt;
+        &lt;param-value&gt;StripesResources&lt;/param-value&gt;
+    &lt;/config-param&gt;</pre>
+<p>
+	Note however, that this approach only works for simple ResourceBundles, i.e. with <code>.properties</code> files.
+	The JSTL bundle plugin provides a means to go beyond this. Whenever you use the JSTL tags for localization and you
+	also implement your own {@link net.sourceforge.stripes.localization.LocalizationBundleFactory}, you'll benefit from
+	using it.
+</p>
+<h1>Using this plugin</h1>
+<p>
+	You can use this plugin by configuring Stripes to use the {@link JstlBundleInterceptor}, either by explicit
+	configuration, or by including this package as an extension package. Configuration notes can be found in the
+	javadoc of {@link JstlBundleInterceptor}.
+</p>
+
+</body>
+</html>
