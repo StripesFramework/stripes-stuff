@@ -2,7 +2,7 @@
  * <p>Title: StripesStuff</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2007</p>
- * <p>Company: Institut de recherches cliniques de Montréal (http://www.ircm.qc.ca)</p>
+ * <p>Company: Institut de recherches cliniques de Montr&eacute;al (http://www.ircm.qc.ca)</p>
  */
 package org.stripesstuff.plugin.session;
 

@@ -2,7 +2,7 @@
  * <p>Title: StripesTest</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2008</p>
- * <p>Company: Institut de recherches cliniques de Montréal (IRCM)</p>
+ * <p>Company: Institut de recherches cliniques de Montr&eacute;al (IRCM)</p>
  */
 package org.stripesstuff.tests.session.action;
 
