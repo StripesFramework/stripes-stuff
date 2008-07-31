@@ -1,14 +1,21 @@
 package org.stripesstuff.plugin.security;
 
 import java.lang.reflect.Method;
+
 import javax.servlet.http.HttpServletResponse;
 
-import net.sourceforge.stripes.action.*;
-import net.sourceforge.stripes.config.*;
-import net.sourceforge.stripes.controller.*;
+import net.sourceforge.stripes.action.ActionBean;
+import net.sourceforge.stripes.action.ErrorResolution;
+import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.config.BootstrapPropertyResolver;
+import net.sourceforge.stripes.config.ConfigurableComponent;
+import net.sourceforge.stripes.config.Configuration;
+import net.sourceforge.stripes.controller.ExecutionContext;
+import net.sourceforge.stripes.controller.Interceptor;
+import net.sourceforge.stripes.controller.Intercepts;
+import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.exception.StripesRuntimeException;
 import net.sourceforge.stripes.util.Log;
-import net.sourceforge.stripes.util.ReflectUtil;
 
 
 /**
@@ -61,32 +68,22 @@ public class SecurityInterceptor
 
 		// Instantiate the security manager.
 
-		String securityMangerClassName = resolver.getProperty(SECURITY_MANAGER_CLASS);
-		if (securityMangerClassName != null)
+		try
 		{
-			try
-			{
-				// Use the reflection utility class instead of Class#forname(String).
-				// This is more flexible, and can load classes if this class uses a different classloader than the class
-				// implementing the security manager. This is especially useful if the security manager is defined in
-				// your application, while this interceptor is in a library. Without this, the security manager cannot
-				// be found.
+			// Ask the BootstrapPropertyResolver for a subclass of SecurityManager.
+			// BootstrapPropertyResolver will look in web.xml first then scan the
+			// classpath if the class wasn't specified in web.xml
+			
+			Class<? extends SecurityManager> clazz = resolver.getClassProperty(SECURITY_MANAGER_CLASS, SecurityManager.class);
 
-				Class clazz = ReflectUtil.findClass(securityMangerClassName);
-				securityManager = (SecurityManager)clazz.newInstance();
-			}
-			catch (Exception e)
-			{
-				String msg = "Failed to configure the SecurityManager: instantiation failed.";
-				throw new StripesRuntimeException(msg, e);
-			}
+			if (clazz != null)
+				securityManager = (SecurityManager) clazz.newInstance();
 		}
-//		else // Optional: delete this block to allow all access if no security manager is defined.
-//		{
-//			String msg = "Failed to configure the SecurityManager: no class specified in the property \"" +
-//			             SECURITY_MANAGER_CLASS + "\".";
-//			throw new StripesRuntimeException(msg);
-//		}
+		catch (Exception e)
+		{
+			String msg = "Failed to configure the SecurityManager: instantiation failed.";
+			throw new StripesRuntimeException(msg, e);
+		}
 
 		if (securityManager != null)
 		{
