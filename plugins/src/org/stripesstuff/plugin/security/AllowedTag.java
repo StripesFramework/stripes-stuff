@@ -24,6 +24,7 @@ import net.sourceforge.stripes.util.Log;
 public class AllowedTag
 		extends TagSupport
 {
+	private static final long	serialVersionUID	= 1L;
 	/**
 	 * Logger for this class.
 	 */

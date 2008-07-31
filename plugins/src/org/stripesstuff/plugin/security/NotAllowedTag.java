@@ -12,6 +12,8 @@ import javax.servlet.jsp.JspException;
 public class NotAllowedTag
 		extends AllowedTag
 {
+	private static final long	serialVersionUID	= 1L;
+
 	/**
 	 * Do the opposite of the parent tag.
 	 *
