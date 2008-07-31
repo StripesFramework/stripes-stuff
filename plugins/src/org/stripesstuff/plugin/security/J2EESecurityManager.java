@@ -2,9 +2,13 @@ package org.stripesstuff.plugin.security;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import javax.annotation.security.*;
+
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
 import net.sourceforge.stripes.action.ActionBean;
+import net.sourceforge.stripes.config.DontAutoLoad;
 import net.sourceforge.stripes.util.Log;
 
 
@@ -19,6 +23,7 @@ import net.sourceforge.stripes.util.Log;
  * @author <a href="mailto:kindop@xs4all.nl">Oscar Westra van Holthe - Kind</a>
  * @version $Id$
  */
+@DontAutoLoad
 public class J2EESecurityManager
 		implements SecurityManager
 {
@@ -137,7 +142,6 @@ public class J2EESecurityManager
 	 * @param handler the current event handler; used for security decisions
 	 * @return {@link Boolean#TRUE TRUE} if the user is authenticated, {@link Boolean#FALSE FALSE} if not, and {@code null} if undecided
 	 */
-	@SuppressWarnings({"UnusedDeclaration"})
 	protected Boolean isUserAuthenticated(ActionBean bean, Method handler)
 	{
 		return bean.getContext().getRequest().getUserPrincipal() != null;
@@ -153,7 +157,6 @@ public class J2EESecurityManager
 	 * @param role    the role to check
 	 * @return {@code true} if the user has the role, and {@code false} otherwise
 	 */
-	@SuppressWarnings({"UnusedDeclaration"})
 	protected Boolean hasRole(ActionBean bean, Method handler, String role)
 	{
 		return bean.getContext().getRequest().isUserInRole(role);

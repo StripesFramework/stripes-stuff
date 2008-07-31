@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sourceforge.stripes.action.ActionBean;
+import net.sourceforge.stripes.config.DontAutoLoad;
 import net.sourceforge.stripes.controller.ParameterName;
 import net.sourceforge.stripes.exception.StripesRuntimeException;
 import net.sourceforge.stripes.util.Log;
@@ -30,6 +31,7 @@ import net.sourceforge.stripes.validation.expression.ExpressionValidator;
  * @author <a href="mailto:xf2697@fastmail.fm">Fred Daoud</a>
  * @version $Id: InstanceBasedSecurityManager.java 205 2007-04-27 18:58:49Z oscar $
  */
+@DontAutoLoad
 public class InstanceBasedSecurityManager
 		extends J2EESecurityManager
 {
