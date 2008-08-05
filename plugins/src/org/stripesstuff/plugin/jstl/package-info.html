@@ -21,9 +21,21 @@
 </p>
 <h1>Using this plugin</h1>
 <p>
-	You can use this plugin by configuring Stripes to use the {@link JstlBundleInterceptor}, either by explicit
-	configuration, or by including this package as an extension package. Configuration notes can be found in the
-	javadoc of {@link JstlBundleInterceptor}.
+	The plugin has two modes of operation: reuse the JSTL default, or set the JSTL default.
+</p>
+<p>
+	To reuse the JSTL default, configure Stripes to use org.stripesstuff.plugin.jstl.JstlLocalizationBundleFactory
+	as LocalizationBundleFactory. This ensures that Stripes uses your context parameter to load the ResourceBundle for
+	error messages, field names and the default bundle in JSP's.
+</p>
+<p>
+	You can also set the JSTL default using the plugin. To do that, configure Stripes to use the
+	{@link JstlBundleInterceptor}, either by explicit configuration, or by including this package as an extension
+	package. Configuration notes can be found in the javadoc of {@link JstlBundleInterceptor}.
+</p>
+<p>
+	If you configure both approaches, the LocalizationBundleFactory approach takes precedence (the interceptor disableѕ
+	itself).
 </p>
 
 </body>

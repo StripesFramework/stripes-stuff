@@ -98,13 +98,16 @@ public class JstlBundleInterceptor
 		LOGGER.debug("Initializing JstlBundleInterceptor");
 		BootstrapPropertyResolver propertyResolver = configuration.getBootstrapPropertyResolver();
 
-		errorBundleName = propertyResolver.getProperty(ERROR_BUNDLE_NAME_CONFIG);
-		LOGGER.debug("errorBundleName = ", errorBundleName == null ? "null" : '"' + errorBundleName + '"');
-
-		fieldBundleName = propertyResolver.getProperty(FIELD_BUNDLE_NAME_CONFIG);
-		LOGGER.debug("fieldBundleName = ", fieldBundleName == null ? "null" : '"' + fieldBundleName + '"');
-
 		localizationBundleFactory = configuration.getLocalizationBundleFactory();
+
+		if (!(localizationBundleFactory instanceof JstlLocalizationBundleFactory))
+		{
+			errorBundleName = propertyResolver.getProperty(ERROR_BUNDLE_NAME_CONFIG);
+			LOGGER.debug("errorBundleName = ", errorBundleName == null ? "null" : '"' + errorBundleName + '"');
+
+			fieldBundleName = propertyResolver.getProperty(FIELD_BUNDLE_NAME_CONFIG);
+			LOGGER.debug("fieldBundleName = ", fieldBundleName == null ? "null" : '"' + fieldBundleName + '"');
+		}
 
 		if (configuration.getServletContext().getInitParameter(Config.FMT_LOCALIZATION_CONTEXT) == null)
 		{
