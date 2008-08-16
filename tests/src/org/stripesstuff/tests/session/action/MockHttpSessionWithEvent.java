@@ -22,7 +22,6 @@ import net.sourceforge.stripes.mock.MockHttpSession;
  * MockHttpSession that handle HttpSession events.
  * @author Christian Poitras
  */
-@SuppressWarnings("deprecation")
 public class MockHttpSessionWithEvent extends MockHttpSession {
     
     boolean active = true;

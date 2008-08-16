@@ -120,7 +120,6 @@ public class Mailer
 		return setBody(url, (Map<String, Object>) new HashMap<String, Object>());
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Mailer setBody(URL url, Map<String, Object> parameters) throws IOException
 	{
 		body = new UrlMessageBody(url, parameters);

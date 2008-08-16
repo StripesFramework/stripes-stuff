@@ -117,7 +117,6 @@ public class InstanceBasedSecurityManager
 	 * @param expression the EL expression to evaluate
 	 * @return the result of the EL expression
 	 */
-	@SuppressWarnings({"deprecation"})
 	private Object evaluateRoleExpression(ActionBean bean, String expression)
 	{
 		try

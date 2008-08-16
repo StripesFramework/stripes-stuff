@@ -206,7 +206,6 @@ public class SessionStoreInterceptor implements Interceptor {
                 ret = session.getAttribute(key);
                 session.setAttribute(key, object);
             }
-            @SuppressWarnings("unchecked")
             SessionMapper mapper = (SessionMapper) session.getAttribute(MAPPER_ATTRIBUTE);
             if (mapper == null) {
                 // Register mapper for session.
