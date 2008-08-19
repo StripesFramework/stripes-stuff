@@ -148,7 +148,7 @@
             description="Builds the StripesStuff distribution bundles.">
         <mkdir dir="${dist.dir}"/>
         <zip destfile="${dist.dir}/${zip.file}">
-            <zipfileset dir="." includes="src/**/*" prefix="${zip.prefix}"/>
+            <zipfileset dir="." includes="plugins/src/**/*" prefix="${zip.prefix}"/>
             <zipfileset dir="${doc.dir}/api" includes="**/*" prefix="${zip.prefix}/docs/javadoc"/>
             <zipfileset dir="${doc.dir}/tagapi" includes="**/*" prefix="${zip.prefix}/docs/tagdoc"/>
             <zipfileset dir="dist" includes="${product.jar}-${product.version}.jar" prefix="${zip.prefix}"/>
