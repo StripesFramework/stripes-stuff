@@ -16,9 +16,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import net.sourceforge.stripes.controller.ExecutionContext;
-import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.util.Log;
 
 public class Mailer
@@ -46,25 +45,41 @@ public class Mailer
 	private Set<InternetAddress>	BCC		= new HashSet<InternetAddress>();
 
 	private Session					session;
+	
+	private static ThreadLocal<HttpServletRequest> request = new ThreadLocal<HttpServletRequest>(); 
+	private static ThreadLocal<HttpServletResponse> response = new ThreadLocal<HttpServletResponse>(); 
 
-	public Mailer()
+	public Mailer(HttpServletRequest request, HttpServletResponse response)
 	{
-		this(DEFAULT_PROPERTIES);
+		this(request, response, DEFAULT_PROPERTIES);
 	}
 
-	public Mailer(Properties properties)
+	public Mailer(HttpServletRequest request, HttpServletResponse response, Properties properties)
 	{
-		this(properties, null);
+		this(request, response, properties, null);
 	}
 
-	public Mailer(Authenticator authenticator)
+	public Mailer(HttpServletRequest request, HttpServletResponse response, Authenticator authenticator)
 	{
-		this(DEFAULT_PROPERTIES, authenticator);
+		this(request, response, DEFAULT_PROPERTIES, authenticator);
 	}
 
-	public Mailer(Properties properties, Authenticator authenticator)
+	public Mailer(HttpServletRequest request, HttpServletResponse response, Properties properties, Authenticator authenticator)
 	{
+		Mailer.request.set(request);
+		Mailer.response.set(response);
+
 		session = Session.getDefaultInstance(properties, authenticator);
+	}
+	
+	static HttpServletRequest getRequest()
+	{
+		return request.get();
+	}
+	
+	static HttpServletResponse getResponse()
+	{
+		return response.get();
 	}
 
 	public void send() throws MessagingException
@@ -212,19 +227,19 @@ public class Mailer
 		
 		if (url.charAt(0) == '/')
 		{
-			ExecutionContext context = MailerInterceptor.getExecutionContext();
-			HttpServletRequest request = context.getActionBeanContext().getRequest();
-			String contextPath = StripesFilter.getConfiguration().getServletContext().getContextPath();
+			HttpServletRequest request = getRequest();
+			HttpServletResponse response = getResponse();
 			
-			return setBody(new URL(request.getScheme(), request.getServerName(), request.getServerPort(), contextPath + url), map);
+			url = request.getContextPath() + url;
+			
+			return setBody(new URL(	request.getScheme(),
+									request.getServerName(),
+									request.getServerPort(),
+									response == null ? url : response.encodeURL(url)
+								  ), map);
 		}
 		
 		return setBody(new URL(url), map);
-	}
-	
-	static public void populate(HttpServletRequest request)
-	{
-		UrlMessageBody.setRequestAttributes(request);
 	}
 	
 	public String getSubject()

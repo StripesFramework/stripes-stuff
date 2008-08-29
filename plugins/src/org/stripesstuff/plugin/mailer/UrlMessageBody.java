@@ -10,7 +10,6 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,26 +17,25 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import net.sourceforge.stripes.controller.FlashScope;
+import net.sourceforge.stripes.controller.StripesConstants;
 import net.sourceforge.stripes.controller.StripesFilter;
+import net.sourceforge.stripes.controller.StripesRequestWrapper;
+import net.sourceforge.stripes.exception.StripesServletException;
 import net.sourceforge.stripes.format.Formatter;
 import net.sourceforge.stripes.util.Log;
 
 public class UrlMessageBody implements MessageBody
 {
-	private static final Log								log							= Log.getInstance(UrlMessageBody.class);
+	private static final Log log = Log.getInstance(UrlMessageBody.class);
 
-	private static final String								STRIPES_STUFF_MAILER_KEY	= "__SSMK";
+	private URL url;
+	private Map<String, Object> parameters;
+	private String contentType;
+	private String content;
 
-	private URL												url;
-	private Map<String, Object>								parameters;
-	private static final Map<String, Map<String, Object>>	instanceParameters			= new ConcurrentHashMap<String, Map<String, Object>>();
-	private String											contentType;
-	private String											content;
-
-	private static int										keyCounter					= 0;
-
-	private static Pattern									TITLE_REGEX					= Pattern.compile("(?is)<title(?=\\s|>)[^>]*>(.*?)</title");
-
+	private static Pattern TITLE_REGEX = Pattern.compile("(?is)<title(?=\\s|>)[^>]*>(.*?)</title");
+	
 	public UrlMessageBody(URL url) throws IOException
 	{
 		this(url, null);
@@ -54,18 +52,12 @@ public class UrlMessageBody implements MessageBody
 	@SuppressWarnings("unchecked")
 	private void loadUrl() throws IOException
 	{
-		String key = null;
-
-		synchronized (this)
-		{
-			key = Integer.toHexString(keyCounter++);
-		}
+		HttpServletRequest request = Mailer.getRequest();
+		
 		try
 		{
 			if (parameters != null)
 			{
-				instanceParameters.put(key, parameters);
-				
 				StringBuilder query = new StringBuilder();
 				
 				if (url.getQuery() != null)
@@ -74,29 +66,42 @@ public class UrlMessageBody implements MessageBody
 					query.append(url.getQuery());
 				}
 				
-				query.append(query.length() == 0 ? '?' : '&')
-						.append(URLEncoder.encode(STRIPES_STUFF_MAILER_KEY, "UTF-8"))
+				FlashScope flash = getFlashScope(request);
+				
+				if (flash != null)
+					query.append(query.length() == 0 ? '?' : '&')
+						.append(StripesConstants.URL_KEY_FLASH_SCOPE_ID)
 						.append('=')
-						.append(key);
+						.append(flash.key());
+				else
+					log.warn("Couldn't create FlashScope!");
 				
 				for (Map.Entry<String, Object> parameter : parameters.entrySet())
 				{
 					Object o = parameter.getValue();
 					
 					Formatter formatter = StripesFilter.getConfiguration().getFormatterFactory().getFormatter(o.getClass(), Locale.getDefault(), null, null);
+					
+					String name = parameter.getKey();
 					String value = null;
+					
 					if (formatter != null)
 						value = formatter.format(o);
 					else
-						value = parameter.getValue().toString();
+						value = o.toString();
 
-					log.trace("Adding parameter ", parameter.getKey(), " with value ", value);
+					log.trace("Adding parameter ", name, " with value ", value);
 					
 					query.append('&')
-							.append(URLEncoder.encode(parameter.getKey(), "UTF-8"))
+							.append(URLEncoder.encode(name, "UTF-8"))
 							.append('=')
 							.append(URLEncoder.encode(value, "UTF-8"));
+					
+					if (flash != null)
+						flash.put(name, o);
 				}
+				
+				releaseFlashScope(flash);
 				
 				url = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getPath() + query);
 			}
@@ -105,8 +110,17 @@ public class UrlMessageBody implements MessageBody
 			
 			URLConnection connection = url.openConnection();
 			
-			if (connection instanceof HttpURLConnection)
-				contentType = ((HttpURLConnection) connection).getContentType();
+			HttpURLConnection http = (HttpURLConnection) connection;
+			
+			String cookie = request == null ? null : request.getHeader("Cookie");
+			
+			if (cookie != null)
+			{
+				log.trace("Adding cookies: ", cookie);
+				http.addRequestProperty("Cookie", cookie);
+			}
+			
+			contentType = http.getContentType();
 			
 			byte[] data = new byte[4096];
 			int count;
@@ -128,11 +142,35 @@ public class UrlMessageBody implements MessageBody
 		{
 			log.error(e);
 		}
-		finally
+	}
+	
+	private FlashScope getFlashScope(HttpServletRequest request)
+	{
+		if (request == null)
 		{
-			// Memory leaks are not good!
-			instanceParameters.remove(key);
+			log.debug("Missing request!");
+			return null;
 		}
+		
+		log.trace("Attempting to create a FakeRequest");
+		
+		request = new FakeRequest(request);
+		
+		try
+		{
+			request = new StripesRequestWrapper(request);
+		} catch (StripesServletException e)
+		{
+			log.error(e);
+		}
+		
+		return FlashScope.getCurrent(request, true);		
+	}
+	
+	private void releaseFlashScope(FlashScope flashScope)
+	{
+		if (flashScope != null)
+			flashScope.completeRequest();
 	}
 
 	public String getTitle()
@@ -191,22 +229,6 @@ public class UrlMessageBody implements MessageBody
 	public Map<String, Object> getParameters()
 	{
 		return parameters;
-	}
-
-	public static void setRequestAttributes(HttpServletRequest request)
-	{
-		String key = request.getParameter(STRIPES_STUFF_MAILER_KEY);
-
-		if (key == null)
-			return;
-
-		Map<String, Object> parameters = instanceParameters.get(key);
-		
-		if (parameters == null)
-			return;
-		
-		for (Map.Entry<String, Object> parameter : parameters.entrySet())
-			request.setAttribute(parameter.getKey(), parameter.getValue());
 	}
 
 	public void setParameters(Map<String, Object> parameters)
