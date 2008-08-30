@@ -111,13 +111,12 @@ public class UrlMessageBody implements MessageBody
 			URLConnection connection = url.openConnection();
 			
 			HttpURLConnection http = (HttpURLConnection) connection;
-			
-			String cookie = request == null ? null : request.getHeader("Cookie");
-			
-			if (cookie != null)
+
+			if (request != null)
 			{
-				log.trace("Adding cookies: ", cookie);
-				http.addRequestProperty("Cookie", cookie);
+				String cookieName = System.getProperty("org.apache.catalina.JSESSIONID", "JSESSIONID");
+				String cookieValue = request.getSession().getId();
+				http.addRequestProperty("Cookie", cookieName + "=" + cookieValue);
 			}
 			
 			contentType = http.getContentType();

@@ -16,7 +16,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.stripes.util.Log;
 
@@ -47,27 +46,25 @@ public class Mailer
 	private Session					session;
 	
 	private static ThreadLocal<HttpServletRequest> request = new ThreadLocal<HttpServletRequest>(); 
-	private static ThreadLocal<HttpServletResponse> response = new ThreadLocal<HttpServletResponse>(); 
 
-	public Mailer(HttpServletRequest request, HttpServletResponse response)
+	public Mailer(HttpServletRequest request)
 	{
-		this(request, response, DEFAULT_PROPERTIES);
+		this(request, DEFAULT_PROPERTIES);
 	}
 
-	public Mailer(HttpServletRequest request, HttpServletResponse response, Properties properties)
+	public Mailer(HttpServletRequest request, Properties properties)
 	{
-		this(request, response, properties, null);
+		this(request, properties, null);
 	}
 
-	public Mailer(HttpServletRequest request, HttpServletResponse response, Authenticator authenticator)
+	public Mailer(HttpServletRequest request, Authenticator authenticator)
 	{
-		this(request, response, DEFAULT_PROPERTIES, authenticator);
+		this(request, DEFAULT_PROPERTIES, authenticator);
 	}
 
-	public Mailer(HttpServletRequest request, HttpServletResponse response, Properties properties, Authenticator authenticator)
+	public Mailer(HttpServletRequest request, Properties properties, Authenticator authenticator)
 	{
 		Mailer.request.set(request);
-		Mailer.response.set(response);
 
 		session = Session.getDefaultInstance(properties, authenticator);
 	}
@@ -77,11 +74,6 @@ public class Mailer
 		return request.get();
 	}
 	
-	static HttpServletResponse getResponse()
-	{
-		return response.get();
-	}
-
 	public void send() throws MessagingException
 	{
 		log.debug("preparing email");
@@ -228,14 +220,15 @@ public class Mailer
 		if (url.charAt(0) == '/')
 		{
 			HttpServletRequest request = getRequest();
-			HttpServletResponse response = getResponse();
 			
 			url = request.getContextPath() + url;
+			
+			log.debug("Setting body to ", url);
 			
 			return setBody(new URL(	request.getScheme(),
 									request.getServerName(),
 									request.getServerPort(),
-									response == null ? url : response.encodeURL(url)
+									url
 								  ), map);
 		}
 		
