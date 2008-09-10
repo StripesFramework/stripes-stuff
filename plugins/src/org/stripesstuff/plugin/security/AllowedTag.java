@@ -94,7 +94,7 @@ public class AllowedTag
 		{
 			bean = StripesConstants.REQ_ATTR_ACTION_BEAN;
 		}
-		ActionBean actionBean = (ActionBean)pageContext.getAttribute(bean);
+		ActionBean actionBean = (ActionBean)pageContext.getRequest().getAttribute(bean);
 		LOG.debug(String.format("Determining access for action bean \"%s\": %s", bean, actionBean));
 
 		Method handler;
