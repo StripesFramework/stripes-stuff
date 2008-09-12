@@ -112,7 +112,7 @@
   <!-- =================================================================== -->
   <!-- Generate the javadoc for all the sources in the project.            -->
   <!-- =================================================================== -->
-  <target name="javadoc" depends="init" description="Generates the ${product.name} javadoc.">
+  <target name="javadoc" depends="jar" description="Generates the ${product.name} javadoc.">
 	<javadoc
 	   sourcepath="${src.dir}"
 	   destdir="${doc.dir}/api"
