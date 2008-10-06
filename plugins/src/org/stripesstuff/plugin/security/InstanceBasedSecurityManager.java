@@ -22,7 +22,7 @@ import net.sourceforge.stripes.validation.expression.ExpressionValidator;
  * <p>
  * It does this by restricting roles:<ol>
  * <li>Plain role names are used as-is (the superclass handles this already).</li>
- * <li>Role names can also have this format {@code &lt;rolename&gt; if &lt;EL expression&gt;}.</li>
+ * <li>Role names can also have this format {@code <rolename> if <EL expression>}.</li>
  * <li>The rolename part of such roles is used to determine if access is possible.</li>
  * <li>Both the rolename and the expression are used to determine if access is allowed.</li>
  * </ol>
