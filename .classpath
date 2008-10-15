@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="plugins/src"/>
-	<classpathentry kind="src" path="tests/src"/>
-	<classpathentry kind="src" path="examples/src"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="plugins/src"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="tests/src"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="examples/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="plugins/lib/mail.jar"/>
 	<classpathentry kind="lib" path="plugins/lib/servlet-api.jar"/>

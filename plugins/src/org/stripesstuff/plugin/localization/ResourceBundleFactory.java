@@ -1,6 +1,7 @@
-package org.stripesstuff.plugin.jstl;
+package org.stripesstuff.plugin.localization;
 
 import java.util.*;
+import org.stripesstuff.plugin.jstl.JstlBundleInterceptor;
 
 
 /**

@@ -1,9 +1,10 @@
-package org.stripesstuff.plugin.jstl;
+package org.stripesstuff.plugin.localization;
 
 import java.util.*;
 
 import net.sourceforge.stripes.config.ConfigurableComponent;
 import net.sourceforge.stripes.config.Configuration;
+import net.sourceforge.stripes.config.DontAutoLoad;
 import net.sourceforge.stripes.localization.DefaultLocalizationBundleFactory;
 
 
@@ -16,6 +17,7 @@ import net.sourceforge.stripes.localization.DefaultLocalizationBundleFactory;
  * @author <a href="mailto:kindop@xs4all.nl">Oscar Westra van Holthe - Kind</a>
  * @version $Id:$
  */
+@DontAutoLoad
 public class DefaultResourceBundleFactory
 		implements ResourceBundleFactory, ConfigurableComponent
 {
@@ -64,5 +66,13 @@ public class DefaultResourceBundleFactory
 		}
 
 		return bundle;
+	}
+
+	/**
+	 * Returns the base name of the configured resource bundle.
+	 */
+	protected String getBaseName()
+	{
+	    return baseName;
 	}
 }
