@@ -17,12 +17,14 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import net.sourceforge.stripes.config.Configuration;
 import net.sourceforge.stripes.controller.FlashScope;
 import net.sourceforge.stripes.controller.StripesConstants;
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.controller.StripesRequestWrapper;
 import net.sourceforge.stripes.exception.StripesServletException;
 import net.sourceforge.stripes.format.Formatter;
+import net.sourceforge.stripes.format.FormatterFactory;
 import net.sourceforge.stripes.util.Log;
 
 public class UrlMessageBody implements MessageBody
@@ -66,21 +68,35 @@ public class UrlMessageBody implements MessageBody
 					query.append(url.getQuery());
 				}
 				
-				FlashScope flash = getFlashScope(request);
+				FlashScope flash = null;
 				
-				if (flash != null)
-					query.append(query.length() == 0 ? '?' : '&')
-						.append(StripesConstants.URL_KEY_FLASH_SCOPE_ID)
-						.append('=')
-						.append(flash.key());
+				if (request == null)
+					log.debug("If you are trying to email a page from this server things will work better if you create the Mailer with an HttpServletRequest");
 				else
-					log.warn("Couldn't create FlashScope!");
+				{
+					flash = getFlashScope(request);
+					
+					if (flash != null)
+						query.append(query.length() == 0 ? '?' : '&')
+							.append(StripesConstants.URL_KEY_FLASH_SCOPE_ID)
+							.append('=')
+							.append(flash.key());
+					else
+						log.warn("Couldn't create FlashScope!");
+				}
 				
 				for (Map.Entry<String, Object> parameter : parameters.entrySet())
 				{
 					Object o = parameter.getValue();
 					
-					Formatter formatter = StripesFilter.getConfiguration().getFormatterFactory().getFormatter(o.getClass(), Locale.getDefault(), null, null);
+					if (o == null)
+						continue;
+					
+					Configuration configuration = StripesFilter.getConfiguration();
+					FormatterFactory factory = configuration.getFormatterFactory();
+					Class clazz = o.getClass();
+					
+					Formatter formatter = factory.getFormatter(clazz, Locale.getDefault(), null, null);
 					
 					String name = parameter.getKey();
 					String value = null;
