@@ -47,6 +47,11 @@ public class Mailer
 	
 	private static ThreadLocal<HttpServletRequest> request = new ThreadLocal<HttpServletRequest>(); 
 
+	public Mailer()
+	{
+		this(null);
+	}
+	
 	public Mailer(HttpServletRequest request)
 	{
 		this(request, DEFAULT_PROPERTIES);
@@ -221,15 +226,20 @@ public class Mailer
 		{
 			HttpServletRequest request = getRequest();
 			
-			url = request.getContextPath() + url;
-			
-			log.debug("Setting body to ", url);
-			
-			return setBody(new URL(	request.getScheme(),
-									request.getServerName(),
-									request.getServerPort(),
-									url
-								  ), map);
+			if (request == null)
+				log.error("Mailer needs to be passed an HttpServletRequest in the constructor if you want to email relative URLs");
+			else
+			{
+				url = request.getContextPath() + url;
+				
+				log.debug("Setting body to ", url);
+				
+				return setBody(new URL(	request.getScheme(),
+										request.getServerName(),
+										request.getServerPort(),
+										url
+									  ), map);
+			}
 		}
 		
 		return setBody(new URL(url), map);
