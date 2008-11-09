@@ -12,7 +12,9 @@
         <CLASSES>
           <root url="file://$MODULE_DIR$/lib" />
         </CLASSES>
-        <JAVADOC />
+        <JAVADOC>
+          <root url="http://java.sun.com/javaee/5/docs/api/" />
+        </JAVADOC>
         <SOURCES>
           <root url="file://$MODULE_DIR$/../../stripes/stripes/src" />
         </SOURCES>
