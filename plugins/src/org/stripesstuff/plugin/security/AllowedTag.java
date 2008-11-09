@@ -24,7 +24,10 @@ import net.sourceforge.stripes.util.Log;
 public class AllowedTag
 		extends TagSupport
 {
-	private static final long	serialVersionUID	= 1L;
+	/**
+	 * Version number for serialization.
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Logger for this class.
 	 */
@@ -94,10 +97,8 @@ public class AllowedTag
 		{
 			bean = StripesConstants.REQ_ATTR_ACTION_BEAN;
 		}
-		ActionBean actionBean = (ActionBean)pageContext.getAttribute(bean);
-        if (actionBean == null) {
-            actionBean = (ActionBean)pageContext.getRequest().getAttribute(bean);
-        }
+		// Search in page, resuest, session (if valid) and application scopes, in order.
+		ActionBean actionBean = (ActionBean)pageContext.findAttribute(bean);
 		LOG.debug(String.format("Determining access for action bean \"%s\": %s", bean, actionBean));
 
 		Method handler;
