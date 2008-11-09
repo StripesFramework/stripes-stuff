@@ -1,6 +1,5 @@
 package org.stripesstuff.plugin.localization;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import net.sourceforge.stripes.controller.Interceptor;
@@ -25,7 +24,7 @@ public class GenericBundleInterceptor extends AbstractBundleInterceptor implemen
 
     /** Puts the resource bundle as a request-scope attribute. */
     @Override
-    protected void setMessageResourceBundle(HttpServletRequest request, ResourceBundle bundle, Locale locale) {
+    protected void setMessageResourceBundle(HttpServletRequest request, ResourceBundle bundle) {
         request.setAttribute(REQ_ATTR_MESSAGE_RESOURCE_BUNDLE, bundle);
     }
 }
