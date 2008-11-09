@@ -1,8 +1,8 @@
 package org.stripesstuff.plugin.localization;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
+
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.config.BootstrapPropertyResolver;
 import net.sourceforge.stripes.config.ConfigurableComponent;
@@ -15,6 +15,7 @@ import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.exception.StripesRuntimeException;
 import net.sourceforge.stripes.localization.LocalizationBundleFactory;
 import net.sourceforge.stripes.util.Log;
+
 
 /**
  * <p>Interceptor that makes localization bundles available for messages in the view layer. By default, it provides the
@@ -48,10 +49,10 @@ import net.sourceforge.stripes.util.Log;
 public abstract class AbstractBundleInterceptor
 		implements Interceptor, ConfigurableComponent
 {
-    /**
-     * The configuration property used to identify the default bundle.
-     */
-    public static final String DEFAULT_BUNDLE_FACTORY = "BundleInterceptor.ResourceBundleFactory";
+	/**
+	 * The configuration property used to identify the default bundle.
+	 */
+	public static final String DEFAULT_BUNDLE_FACTORY = "BundleInterceptor.ResourceBundleFactory";
 	/**
 	 * Logger for this class.
 	 */
@@ -82,19 +83,23 @@ public abstract class AbstractBundleInterceptor
 		findResourceBundleFactory(configuration);
 	}
 
+
 	/**
 	 * Determines the {@link ResourceBundleFactory} implementation to use, and if one is found, calls
 	 * its {@code init(Configuration)} method if it implements {@link ConfigurableComponent}.
+	 *
+	 * @param configuration the configuration to use if the ResourceBundleFactory is a ConfigurableComponent
+	 * @throws Exception when initializing the ResourceBundleFactory fails
 	 */
 	protected void findResourceBundleFactory(Configuration configuration)
-	        throws Exception
+			throws Exception
 	{
-        BootstrapPropertyResolver propertyResolver = configuration.getBootstrapPropertyResolver();
+		BootstrapPropertyResolver propertyResolver = configuration.getBootstrapPropertyResolver();
 
-        Class<? extends ResourceBundleFactory> resourceBundleFactoryClass =
-            propertyResolver.getClassProperty(DEFAULT_BUNDLE_FACTORY, ResourceBundleFactory.class);
+		Class<? extends ResourceBundleFactory> resourceBundleFactoryClass = propertyResolver.getClassProperty(
+				DEFAULT_BUNDLE_FACTORY, ResourceBundleFactory.class);
 
-        boolean newInstance = false;
+		boolean newInstance = false;
 		if (resourceBundleFactoryClass == null)
 		{
 			if (localizationBundleFactory instanceof ResourceBundleFactory)
@@ -129,6 +134,7 @@ public abstract class AbstractBundleInterceptor
 		LOGGER.debug("Using resource bundle factory: ", resourceBundleFactory);
 	}
 
+
 	/**
 	 * Invoked when intercepting the flow of execution.
 	 *
@@ -140,41 +146,52 @@ public abstract class AbstractBundleInterceptor
 	public Resolution intercept(ExecutionContext context)
 			throws Exception
 	{
-        HttpServletRequest request = context.getActionBeanContext().getRequest();
-        Locale locale = request.getLocale();
+		HttpServletRequest request = context.getActionBeanContext().getRequest();
 
-        if (resourceBundleFactory != null)
+		if (resourceBundleFactory != null)
 		{
-			ResourceBundle bundle = resourceBundleFactory.getDefaultBundle(locale);
-			setMessageResourceBundle(request, bundle, locale);
+			ResourceBundle bundle = resourceBundleFactory.getDefaultBundle(request.getLocale());
+			setMessageResourceBundle(request, bundle);
 		}
 
-		setOtherResourceBundles(request, locale);
+		setOtherResourceBundles(request);
 
 		return context.proceed();
 	}
 
+
 	/**
 	 * Returns the configured {@link LocalizationBundleFactory} implementation.
+	 *
+	 * @return a LocalizationBundleFactory
 	 */
 	protected LocalizationBundleFactory getLocalizationBundleFactory()
 	{
-	    return localizationBundleFactory;
+		return localizationBundleFactory;
 	}
+
 
 	/**
 	 * Gives subclasses an opportunity to set the resolved message resource bundle in the request, if desired.
 	 * The implementation in this class does nothing.
+	 *
+	 * @param request the request to set the bundle to
+	 * @param bundle  the bundle to add to the request
 	 */
-	protected void setMessageResourceBundle(HttpServletRequest request, ResourceBundle bundle, Locale locale)
+	protected void setMessageResourceBundle(HttpServletRequest request, ResourceBundle bundle)
 	{
+		// Default: do nothing.
 	}
 
-    /**
-     * Gives subclasses an opportunity to set other resource bundles in the request, if desired.
-     * The implementation in this class does nothing.
-     */
-	protected void setOtherResourceBundles(HttpServletRequest request, Locale locale)
+
+	/**
+	 * Gives subclasses an opportunity to set other resource bundles in the request, if desired.
+	 * The implementation in this class does nothing.
+	 *
+	 * @param request the request to set the bundles to
+	 */
+	protected void setOtherResourceBundles(HttpServletRequest request)
 	{
+		// Default: do nothing.
 	}
 }

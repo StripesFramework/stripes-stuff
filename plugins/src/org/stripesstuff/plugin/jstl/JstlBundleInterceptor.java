@@ -74,10 +74,10 @@ public class JstlBundleInterceptor extends AbstractBundleInterceptor
         if (!(getLocalizationBundleFactory() instanceof JstlLocalizationBundleFactory))
         {
             BootstrapPropertyResolver propertyResolver = configuration.getBootstrapPropertyResolver();
-    
+
             errorBundleName = propertyResolver.getProperty(ERROR_BUNDLE_NAME_CONFIG);
             LOGGER.debug("errorBundleName = ", errorBundleName == null ? "null" : '"' + errorBundleName + '"');
-    
+
             fieldBundleName = propertyResolver.getProperty(FIELD_BUNDLE_NAME_CONFIG);
             LOGGER.debug("fieldBundleName = ", fieldBundleName == null ? "null" : '"' + fieldBundleName + '"');
         }
@@ -102,9 +102,9 @@ public class JstlBundleInterceptor extends AbstractBundleInterceptor
      * Sets the message resource bundle in the request using the JSTL's mechanism.
      */
 	@Override
-    protected void setMessageResourceBundle(HttpServletRequest request, ResourceBundle bundle, Locale locale)
+    protected void setMessageResourceBundle(HttpServletRequest request, ResourceBundle bundle)
 	{
-        Config.set(request, Config.FMT_LOCALIZATION_CONTEXT, new LocalizationContext(bundle, locale));
+		Config.set(request, Config.FMT_LOCALIZATION_CONTEXT, new LocalizationContext(bundle, request.getLocale()));
         LOGGER.debug("Enabled JSTL localization using: ", bundle);
         LOGGER.debug("Loaded resource bundle ", bundle, " as default bundle");
     }
@@ -113,8 +113,10 @@ public class JstlBundleInterceptor extends AbstractBundleInterceptor
      * Sets the Stripes error and field resource bundles in the request, if their names have been configured.
      */
 	@Override
-	protected void setOtherResourceBundles(HttpServletRequest request, Locale locale)
+	protected void setOtherResourceBundles(HttpServletRequest request)
 	{
+		Locale locale = request.getLocale();
+
         if (errorBundleName != null)
         {
             ResourceBundle errorBundle = getLocalizationBundleFactory().getErrorMessageBundle(locale);
