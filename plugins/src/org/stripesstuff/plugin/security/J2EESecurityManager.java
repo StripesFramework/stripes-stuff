@@ -53,7 +53,7 @@ public class J2EESecurityManager
 	{
 		// Determine if the event handler allows access.
 
-		LOG.debug("Determining if assess is allowed for " + handler.getName() + " on " + bean.toString());
+		LOG.debug("Determining if access is allowed for " + handler.getName() + " on " + bean.toString());
 		Boolean allowed = determineAccessOnElement(bean, handler, handler);
 
 		// If the event handler didn't decide, determine if the action bean class allows access.
@@ -62,7 +62,7 @@ public class J2EESecurityManager
 		Class<?> beanClass = bean.getClass();
 		while (allowed == null && beanClass != null)
 		{
-			LOG.debug("Determining if assess is allowed for " + beanClass.getName() + " on " + bean.toString());
+			LOG.debug("Determining if access is allowed for " + beanClass.getName() + " on " + bean.toString());
 			allowed = determineAccessOnElement(bean, handler, beanClass);
 			beanClass = beanClass.getSuperclass();
 		}
