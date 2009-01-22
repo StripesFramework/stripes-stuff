@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import net.sourceforge.stripes.config.Configuration;
 import net.sourceforge.stripes.controller.FlashScope;
@@ -131,8 +132,12 @@ public class UrlMessageBody implements MessageBody
 			if (request != null)
 			{
 				String cookieName = System.getProperty("org.apache.catalina.JSESSIONID", "JSESSIONID");
-				String cookieValue = request.getSession().getId();
-				http.addRequestProperty("Cookie", cookieName + "=" + cookieValue);
+				HttpSession session = request.getSession(false);
+				if (session != null)
+				{
+					String cookieValue = session.getId();
+					http.addRequestProperty("Cookie", cookieName + "=" + cookieValue);
+				}
 			}
 			
 			contentType = http.getContentType();

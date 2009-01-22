@@ -62,7 +62,8 @@ public class SessionStoreInterceptor implements Interceptor {
         if (LifecycleStage.EventHandling.equals(context.getLifecycleStage())) {
             // Dont't update values in session if a validation error occured.
             if (context.getActionBeanContext().getValidationErrors().isEmpty()) {
-                this.saveFields(fields, context.getActionBean(), context.getActionBeanContext().getRequest().getSession());
+            	if (fields.size() > 0)
+            		this.saveFields(fields, context.getActionBean(), context.getActionBeanContext().getRequest().getSession());
             }
         }
         
@@ -92,20 +93,22 @@ public class SessionStoreInterceptor implements Interceptor {
      * @throws IllegalAccessException Cannot get access to some fields.
      */
     protected void restoreFields(Collection<Field> fields, ActionBean actionBean, ActionBeanContext context) throws IllegalAccessException {
-        HttpSession session = context.getRequest().getSession();
-        Set<String> parameters = this.getParameters(context.getRequest());
-        for (Field field : fields) {
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
-            }
-            if (!parameters.contains(field.getName())) {
-                // Replace value.
-                Object value = session.getAttribute(getFieldKey(field, actionBean.getClass()));
-                // If value is null and field is primitive, don't set value.
-                if (!(value == null && field.getType().isPrimitive())) {
-                    field.set(actionBean, value);
-                }
-            }
+        HttpSession session = context.getRequest().getSession(false);
+        if (session != null) {
+	        Set<String> parameters = this.getParameters(context.getRequest());
+	        for (Field field : fields) {
+	            if (!field.isAccessible()) {
+	                field.setAccessible(true);
+	            }
+	            if (!parameters.contains(field.getName())) {
+	                // Replace value.
+	                Object value = session.getAttribute(getFieldKey(field, actionBean.getClass()));
+	                // If value is null and field is primitive, don't set value.
+	                if (!(value == null && field.getType().isPrimitive())) {
+	                    field.set(actionBean, value);
+	                }
+	            }
+	        }
         }
     }
     /**

@@ -119,9 +119,9 @@ public class FakeRequest implements HttpServletRequest
 		return request.getSession();
 	}
 
-	public HttpSession getSession(boolean arg0)
+	public HttpSession getSession(boolean create)
 	{
-		return request.getSession();
+		return request.getSession(create);
 	}
 
 	public Principal getUserPrincipal()
