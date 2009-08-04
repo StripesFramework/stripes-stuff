@@ -29,8 +29,8 @@ import org.stripesstuff.tests.session.action.SessionActionBean;
 import org.stripesstuff.tests.session.action.ZeroMaxTimeActionBean;
 import org.stripesstuff.tests.session.bean.Person;
 import org.testng.Assert;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.sourceforge.stripes.controller.DispatcherServlet;
@@ -47,9 +47,9 @@ public class SessionTest {
     
     MockServletContext context;
     
-    @BeforeGroups("session")
+    @BeforeClass
     public void setupContext() {
-        context = new MockServletContext("test");
+        context = new MockServletContext("session");
         
         // Add the Stripes Filter
         Map<String,String> filterParams = new HashMap<String,String>();
@@ -62,7 +62,7 @@ public class SessionTest {
         // Add the Stripes Dispatcher
         context.setServlet(DispatcherServlet.class, "StripesDispatcher", null);
     }
-    @AfterGroups("session")
+    @AfterClass
     public void releaseContext() {
         context = null;
     }
