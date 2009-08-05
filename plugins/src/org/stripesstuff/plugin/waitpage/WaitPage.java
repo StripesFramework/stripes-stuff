@@ -6,8 +6,112 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import net.sourceforge.stripes.action.ActionBeanContext;
+
 /**
  * Used to send user to a wait page when event handling takes a long time to complete.
+ * <p>
+ * Event will be invoked by a background request and the user will be redirected to a wait page.
+ * </p>
+ * <p>
+ * The wait page must refresh itself to allow the resolution returned by event to be executed.
+ * To refresh wait page, it can contain a <code>&lt;meta http-equiv="refresh" content="0"/&gt;</code> tag or it can use an AJAX
+ * updater to know when to refresh page.
+ * </p>
+ * <p>
+ * The expected flow when using a simple wait page is:
+ * <ol>
+ * <li>
+ * ActionBeanResolution, HandlerResolution, BindingAndValidation, CustomValidation are executed the same way as if event didn't
+ * contain a WaitPage annotation.
+ * </li>
+ * <li>
+ * A resolution is returned to wait for event to complete.
+ * </li>
+ * <li>
+ * If event completes before delay, resolution returned by event is executed. Flow ends immediately.
+ * </li>
+ * <li>
+ * If delay expired and event didn't complete, wait page is returned.
+ * </li>
+ * <li>
+ * Wait page is refreshed until event completes.
+ * </li>
+ * <li>
+ * Event resolution is executed.
+ * </li>
+ * </ol>
+ * </p>
+ * <p>
+ * If an AJAX updater is used, your page must have a way to known when to refresh itself. It can
+ * be done by putting an indicator in your action bean that will be flagged once event completes.<br>
+ * Examples :<br>
+ * <code>
+ * public Resolution myEvent {<br>
+ *     Do stuff...<br>
+ *     completeIndicator = true;<br>
+ * }<br>
+ * </code>
+ * Then your AJAX page must inform the AJAX updater to refresh wait page.<br>
+ * The expected flow when using an AJAX updater is:
+ * <ol>
+ * <li>
+ * ActionBeanResolution, HandlerResolution, BindingAndValidation, CustomValidation are executed the same as if event didn't
+ * contain a WaitPage annotation.
+ * </li>
+ * <li>
+ * A resolution is returned to wait for delay.
+ * </li>
+ * <li>
+ * If event completes before delay, resolution returned by event is executed. Flow ends immediately.
+ * </li>
+ * <li>
+ * If delay expired and event didn't complete, wait page is returned.
+ * </li>
+ * <li>
+ * AJAX updater in wait page will now make requests to the same URL as wait page would do for refresh, but a non-empty parameter
+ * named "ajax" must be added to request.
+ * </li>
+ * <li>
+ * Once indicator is flagged, AJAX updater must refresh wait page.
+ * </li>
+ * <li>
+ * Event resolution is executed.
+ * </li>
+ * </ol>
+ * </p>
+ * <p>
+ * How validation errors are handled:
+ * <ul>
+ * <li>
+ * If a validation error occurs during any stages preceding event EventHandling, WaitPage annotation will have no effects.
+ * </li>
+ * <li>
+ * If a validation error occurs during EventHandling, event resolution is execute and errors are available in
+ * {@link ActionBeanContext#getValidationErrors()} and Stripes's errors tag can be used normally.
+ * Event can return {@link ActionBeanContext#getSourcePageResolution()}.
+ * </li>
+ * </ul>
+ * </p>
+ * <p>
+ * In case the event throws an exception, you can specify an error page that the user will be forwarded to. If no error page is
+ * specified, the exception will be handled by stripes (or any exception handler registered by stripes).<br>
+ * Note that if event throws an exception and no error page is specified, the exception will be handled twice by stripes:
+ * once for the event invocation in background and once again when wait page refreshes.
+ * </p>
+ * <p>
+ * The request present in action bean during event execution is the same request as if no WaitPage annotation is present.
+ * So all headers, parameters and attributes set before event handling will be available in event.<br>
+ * <strong>
+ * Request headers, parameters and attributes will be available in resolution only under action bean's context.<br>
+ * </strong>
+ * <strong>
+ * Once event completes, the request in action bean's context doesn't change and is different from the one in execution context.
+ * This means that in a JSP action bean context's request is not the same as page context's request. So the following EL expression
+ * will be false <code>${actionBean.context.request eq pageContext.request}</code>.<br>
+ * Form tags values must be coming from action bean since no request parameter will be available.<br>
+ * </strong>
+ * </p>
  * 
  * @author Aaron Porter
  * @author Christian Poitras
@@ -21,8 +125,9 @@ public @interface WaitPage {
      */
     String path();
     /**
-     * Delay allowed for event handler to complete before sending user to wait page.
-     * If event handler completes before delay is expired, the result of event handler will be displayed directly.
+     * Delay allowed for event to complete before sending user to wait page.<br>
+     * If event completes before delay is expired, the resolution returned by event will be executed directly and wait page
+     * will never be shown.
      */
     int delay() default 0;
     /**
@@ -30,7 +135,7 @@ public @interface WaitPage {
      */
     int refresh() default 0;
     /**
-     * Redirect user to this page if event handler throws an exception.
+     * Redirect user to this page if event throws an exception.
      */
     String error() default "";
     /**

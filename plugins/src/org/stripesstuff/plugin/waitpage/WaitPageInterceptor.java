@@ -22,36 +22,11 @@ import net.sourceforge.stripes.util.Log;
 import net.sourceforge.stripes.util.UrlBuilder;
 
 /**
- * <p>
- * Used for events that takes a long time to execute and are annotated with {@link WaitPage}.
- * </p>
- * <p>
- * Event will be invoked by a background request and the user will be redirected to a wait page.
- * </p>
- * <p>
- * The wait page must refresh itself to allow the resolution returned by event to be executed.
- * To refresh wait page, it can contain a &lt;meta http-equiv="refresh" content="0"/&gt; tag or it can use an AJAX updater
- * to know when to refresh page.
- * </p>
- * <p>
- * If an AJAX updater is used, your page must have a way to known when to refresh itself. It can
- * be done by putting an indicator in your action bean that will be flagged once event completes.<br>
- * Examples :<br>
- * public Resolution myEvent {<br>
- *     Do stuff...<br>
- *     completeIndicator = true;<br>
- * }<br>
- * Then your AJAX page must inform the AJAX updater to refresh wait page.
- * </p>
- * <p>
- * In case the event throws an exception, you can specify an error page that the user will be forwarded to. If no error page is
- * specified, the exception will be handled by stripes (or any exception handler registered by stripes).<br>
- * Note that if event throws an exception and no error page is specified, the exception will be handled twice by stripes.
- * Once for the event invocation and once for the refresh done in the wait page.
- * </p>
+ * Interceptor documentation is explained in {@link WaitPage} documentation.
  * 
  * @author Aaron Porter
  * @author Christian Poitras
+ * @see WaitPage
  */
 @Intercepts({LifecycleStage.ActionBeanResolution,
                 LifecycleStage.HandlerResolution,
@@ -281,8 +256,8 @@ public class WaitPageInterceptor implements Interceptor {
                 log.trace("the processor is finished so we'll remove it from the map");
                 // Remove context since event completed and we will show resolution returned by event.
                 contexts.remove(context.hashCode());
-                // Context of action bean should be replaced so that response matches the one in execution context.
-                context.actionBean.setContext(executionContext.getActionBeanContext());
+                // Since errors are are saved in request, context cannot be replaced or errors would be lost.
+                //context.actionBean.setContext(executionContext.getActionBeanContext());
                 // Save action bean in request scope to make it available in JSP.
                 executionContext.getActionBeanContext().getRequest().setAttribute("actionBean", context.actionBean);
                 // Set action bean in request so form will be populated.

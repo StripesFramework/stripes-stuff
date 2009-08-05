@@ -14,9 +14,11 @@ import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
-import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.action.UrlBinding;
+import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.Validate;
+import net.sourceforge.stripes.validation.ValidationErrors;
+import net.sourceforge.stripes.validation.ValidationMethod;
 
 /**
  * Test {@link WaitPage} annotation.
@@ -25,8 +27,6 @@ import net.sourceforge.stripes.validation.Validate;
  */
 @UrlBinding("/Adder.action")
 public class AdderActionBean implements ActionBean {
-    
-    private static final String COMPLETE_KEY = AdderActionBean.class.getName() + "#complete";
     
     private ActionBeanContext context;
     public ActionBeanContext getContext() {return context;}
@@ -136,7 +136,7 @@ public class AdderActionBean implements ActionBean {
     @WaitPage(path="wait.jsp", delay=100, refresh=100, ajax="ajax.jsp")
     public Resolution shortAjaxUpdater() throws InterruptedException {
         result = first + second;
-        context.getRequest().getSession().setAttribute(COMPLETE_KEY, "true");
+        this.complete = true;
         return new ForwardResolution("index.jsp");
     }
     /**
@@ -151,19 +151,6 @@ public class AdderActionBean implements ActionBean {
         result = first + second;
         this.complete = true;
         return new ForwardResolution("index.jsp");
-    }
-    /**
-     * Returns if method completed for AJAX.
-     * @return if method completed for AJAX.
-     * @throws InterruptedException
-     */
-    @HandlesEvent("hasCompleted")
-    public Resolution hasCompleted() throws InterruptedException {
-        if (context.getRequest().getSession().getAttribute(COMPLETE_KEY) == null) {
-            return new StreamingResolution("text/plain", "false");
-        } else {
-            return new StreamingResolution("text/plain", (String)context.getRequest().getSession().getAttribute(COMPLETE_KEY));
-        }
     }
     /**
      * Addition should demand exactly 1 refresh.
@@ -189,6 +176,43 @@ public class AdderActionBean implements ActionBean {
     public Resolution sourcePage() throws InterruptedException {
         Thread.sleep(10);
         result = first + second;
+        return context.getSourcePageResolution();
+    }
+    /**
+     * An error is saved during custom validation if first > 100.
+     */
+    @ValidationMethod(on={"oneRefreshAdd", "oneRefreshAjaxUpdater"})
+    public void customValidationError(ValidationErrors errors) throws InterruptedException {
+        if (this.first > 100) {
+            errors.addGlobalError(new SimpleError("Event could not complete normally."));
+        }
+    }
+    /**
+     * An error is saved during event execution.
+     * Source page resolution is returned.
+     * @return index.jsp
+     * @throws InterruptedException
+     */
+    @HandlesEvent("validationError")
+    @WaitPage(path="wait.jsp", refresh=100)
+    public Resolution validationError() throws InterruptedException {
+        Thread.sleep(10);
+        context.getValidationErrors().addGlobalError(new SimpleError("Event could not complete normally."));
+        return context.getSourcePageResolution();
+    }
+    /**
+     * An error is saved during event execution.
+     * Source page resolution is returned.
+     * This event is intended to work with an AJAX updater.
+     * @return index.jsp
+     * @throws InterruptedException
+     */
+    @HandlesEvent("validationErrorAjax")
+    @WaitPage(path="wait.jsp", refresh=100, ajax="ajax.jsp")
+    public Resolution validationErrorAjax() throws InterruptedException {
+        Thread.sleep(10);
+        context.getValidationErrors().addGlobalError(new SimpleError("Event could not complete normally."));
+        this.complete = true;
         return context.getSourcePageResolution();
     }
     
