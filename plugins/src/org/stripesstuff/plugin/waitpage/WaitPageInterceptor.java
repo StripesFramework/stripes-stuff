@@ -241,6 +241,10 @@ public class WaitPageInterceptor implements Interceptor {
             // Default is to go to wait page. This will be changed if an AJAX updater is used.
             // If event completed, this will be the resolution returned by event.
             Resolution resolution = context.resolution;
+            // Save action bean in request scope to make it available in JSP.
+            executionContext.getActionBeanContext().getRequest().setAttribute("actionBean", context.actionBean);
+            // Set action bean in request so form will be populated.
+            executionContext.getActionBeanContext().getRequest().setAttribute(StripesFilter.getConfiguration().getActionResolver().getUrlBinding(context.actionBean.getClass()), context.actionBean);
             
             if (executionContext.getActionBeanContext().getRequest().getParameter(AJAX) != null)
             {
@@ -258,10 +262,6 @@ public class WaitPageInterceptor implements Interceptor {
                 contexts.remove(context.hashCode());
                 // Since errors are are saved in request, context cannot be replaced or errors would be lost.
                 //context.actionBean.setContext(executionContext.getActionBeanContext());
-                // Save action bean in request scope to make it available in JSP.
-                executionContext.getActionBeanContext().getRequest().setAttribute("actionBean", context.actionBean);
-                // Set action bean in request so form will be populated.
-                executionContext.getActionBeanContext().getRequest().setAttribute(StripesFilter.getConfiguration().getActionResolver().getUrlBinding(context.actionBean.getClass()), context.actionBean);
                 if (context.throwable != null) {
                     // Event did not complete normally, it thrown an exception.
                     if (("".equals(context.annotation.error())) && (context.throwable instanceof Exception)) {

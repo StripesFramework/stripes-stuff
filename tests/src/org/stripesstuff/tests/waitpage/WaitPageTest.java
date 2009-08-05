@@ -89,8 +89,10 @@ public class WaitPageTest {
         AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
         Assert.assertEquals(bean.getResult(), 3);
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     /**
      * Wait page should be returned once.
@@ -115,6 +117,11 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // In next request result should be available.
         trip = new MockRoundtrip(context, actionBeanUrl, session);
@@ -129,8 +136,10 @@ public class WaitPageTest {
         Assert.assertEquals(bean.getResult(), 3);
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     /**
      * Wait page should be returned twice.
@@ -157,6 +166,11 @@ public class WaitPageTest {
             trip.execute();
             Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
         }
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // In next request result should be available.
         trip = new MockRoundtrip(context, actionBeanUrl, session);
@@ -171,8 +185,10 @@ public class WaitPageTest {
         Assert.assertEquals(bean.getResult(), 3);
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     
     /**
@@ -204,9 +220,10 @@ public class WaitPageTest {
         }
         
         // Test that action bean is in request.
-        AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     /**
      * An exception should be thrown after having waited once.
@@ -231,6 +248,11 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // In next request exception should be thrown.
         trip = new MockRoundtrip(context, actionBeanUrl, session);
@@ -245,9 +267,10 @@ public class WaitPageTest {
         }
         
         // Test that action bean is in request.
-        AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     
     /**
@@ -278,9 +301,10 @@ public class WaitPageTest {
         Assert.assertTrue(trip.getRequest().getAttribute("exception") instanceof Exception, "Exception no saved as a request attribute");
         
         // Test that action bean is in request.
-        AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     /**
      * Error page should be returned after having waited once.
@@ -306,6 +330,11 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // In next request error page should be returned.
         trip = new MockRoundtrip(context, actionBeanUrl, session);
@@ -318,9 +347,10 @@ public class WaitPageTest {
         Assert.assertTrue(trip.getRequest().getAttribute("exception") instanceof Exception, "Exception no saved as a request attribute");
         
         // Test that action bean is in request.
-        AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     
     /**
@@ -350,8 +380,10 @@ public class WaitPageTest {
         Assert.assertEquals(bean.getResult(), 3);
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     /**
      * AJAX page should be returned on redirect and complete flag should be true.
@@ -377,6 +409,11 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // Simulate AJAX updater in wait page.
         trip = new MockRoundtrip(context, actionBeanUrl, session);
@@ -389,6 +426,11 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getForwardUrl(), "ajax.jsp");
         AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
         Assert.assertEquals(bean.isComplete(), false);
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         trip = new MockRoundtrip(context, actionBeanUrl, session);
         for (Map.Entry<String, String> entry: parameters.entrySet()) {
             trip.addParameter(entry.getKey(), entry.getValue());
@@ -399,6 +441,11 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getForwardUrl(), "ajax.jsp");
         bean = trip.getActionBean(AdderActionBean.class);
         Assert.assertEquals(bean.isComplete(), true);
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // Refresh page to get result.
         trip = new MockRoundtrip(context, actionBeanUrl, session);
@@ -411,8 +458,10 @@ public class WaitPageTest {
         Assert.assertEquals(bean.getResult(), 3);
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     
     /**
@@ -439,6 +488,11 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // Result page should be available on second request.
         trip = new MockRoundtrip(context, actionBeanUrl, session);
@@ -451,8 +505,10 @@ public class WaitPageTest {
         Assert.assertEquals(bean.getResult(), 3);
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     
     /**
@@ -479,6 +535,11 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // In next request result should be available.
         trip = new MockRoundtrip(context, actionBeanUrl, session);
@@ -491,9 +552,10 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getForwardUrl(), "sourcePage.jsp");
         
         // Test that action bean is in request.
-        AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     
     /**
@@ -518,8 +580,10 @@ public class WaitPageTest {
         Assert.assertFalse(bean.getContext().getValidationErrors().isEmpty(), "validation errors should contain an error");
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     /**
      * Test to validate that error are present when custom validation fails.
@@ -543,8 +607,10 @@ public class WaitPageTest {
         Assert.assertFalse(bean.getContext().getValidationErrors().isEmpty(), "validation errors should contain an error");
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     /**
      * Test to validate that error are present when event fails.
@@ -570,6 +636,11 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         trip = new MockRoundtrip(context, actionBeanUrl, session);
         for (Map.Entry<String, String> entry: parameters.entrySet()) {
             trip.addParameter(entry.getKey(), entry.getValue());
@@ -582,8 +653,10 @@ public class WaitPageTest {
         Assert.assertFalse(bean.getContext().getValidationErrors().isEmpty(), "validation errors should contain an error");
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     /**
      * Test to validate that error are present when binding fails with an AJAX updater.
@@ -607,8 +680,10 @@ public class WaitPageTest {
         Assert.assertFalse(bean.getContext().getValidationErrors().isEmpty(), "validation errors should contain an error");
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     /**
      * Test to validate that error are present when custom validation fails with an AJAX updater.
@@ -632,8 +707,10 @@ public class WaitPageTest {
         Assert.assertFalse(bean.getContext().getValidationErrors().isEmpty(), "validation errors should contain an error");
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     /**
      * Test to validate that error are present when event fails with an AJAX updater.
@@ -659,6 +736,11 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         trip = new MockRoundtrip(context, actionBeanUrl, session);
         for (Map.Entry<String, String> entry: parameters.entrySet()) {
             trip.addParameter(entry.getKey(), entry.getValue());
@@ -668,6 +750,11 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getForwardUrl(), "ajax.jsp");
         AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
         Assert.assertEquals(bean.isComplete(), true);
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         trip = new MockRoundtrip(context, actionBeanUrl, session);
         for (Map.Entry<String, String> entry: parameters.entrySet()) {
             trip.addParameter(entry.getKey(), entry.getValue());
@@ -680,8 +767,10 @@ public class WaitPageTest {
         Assert.assertFalse(bean.getContext().getValidationErrors().isEmpty(), "validation errors should contain an error");
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     
     /**
@@ -711,6 +800,11 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         trip = new MockRoundtrip(context, actionBeanUrl, session);
         for (Map.Entry<String, String> entry: parameters.entrySet()) {
             trip.addParameter(entry.getKey(), entry.getValue());
@@ -728,8 +822,10 @@ public class WaitPageTest {
         // Since request in trip is not the request used before wait page, it is impossible to test parameters in trip's request
         
         // Test that action bean is in request.
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), bean);
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), bean);
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
     }
     
     /**
@@ -757,12 +853,22 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
+        Assert.assertEquals(trip.getRequest().getAttribute("/RequestTest.action"), trip.getActionBean(RequestTestActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/RequestTest.action"), "Action bean must be save under it's URL");
         trip = new MockRoundtrip(context, actionBeanUrl, session);
         for (Map.Entry<String, String> entry: parameters.entrySet()) {
             trip.addParameter(entry.getKey(), entry.getValue());
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
+        Assert.assertEquals(trip.getRequest().getAttribute("/RequestTest.action"), trip.getActionBean(RequestTestActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/RequestTest.action"), "Action bean must be save under it's URL");
     }
     /**
      * Test that request header, parameter and attributes are available in event.
@@ -789,6 +895,11 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
+        Assert.assertEquals(trip.getRequest().getAttribute("/RequestTest.action"), trip.getActionBean(RequestTestActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/RequestTest.action"), "Action bean must be save under it's URL");
         trip = new MockRoundtrip(context, actionBeanUrl, session);
         for (Map.Entry<String, String> entry: parameters.entrySet()) {
             trip.addParameter(entry.getKey(), entry.getValue());
@@ -796,6 +907,11 @@ public class WaitPageTest {
         trip.addParameter("ajax", "true");
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "ajax.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
+        Assert.assertEquals(trip.getRequest().getAttribute("/RequestTest.action"), trip.getActionBean(RequestTestActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/RequestTest.action"), "Action bean must be save under it's URL");
         RequestTestActionBean bean = trip.getActionBean(RequestTestActionBean.class);
         Assert.assertEquals(bean.isComplete(), true);
         trip = new MockRoundtrip(context, actionBeanUrl, session);
@@ -804,6 +920,11 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
+        Assert.assertEquals(trip.getRequest().getAttribute("/RequestTest.action"), trip.getActionBean(RequestTestActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/RequestTest.action"), "Action bean must be save under it's URL");
     }
     
     /**
