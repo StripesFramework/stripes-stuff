@@ -135,7 +135,7 @@ public @interface WaitPage {
      */
     int refresh() default 0;
     /**
-     * Redirect user to this page if event throws an exception.
+     * Forward user to this page if event throws an exception.
      */
     String error() default "";
     /**

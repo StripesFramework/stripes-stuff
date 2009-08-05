@@ -9,9 +9,10 @@
         <filter-name>StripesFilter</filter-name>
         <filter-class>net.sourceforge.stripes.controller.StripesFilter</filter-class>
         <init-param>
-            <param-name>Interceptor.Classes</param-name>
+            <param-name>Extension.Packages</param-name>
             <param-value>
-                org.stripesstuff.plugin.session.SessionStoreInterceptor
+                org.stripesstuff.plugin.session,
+                org.stripesstuff.plugin.waitpage
             </param-value>
         </init-param>
         <init-param>
@@ -39,6 +40,10 @@
     <servlet-mapping>
         <servlet-name>StripesDispatcher</servlet-name>
         <url-pattern>*.action</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StripesDispatcher</servlet-name>
+        <url-pattern>*.wait</url-pattern>
     </servlet-mapping>
     
     <!-- The Usual Welcome File List -->

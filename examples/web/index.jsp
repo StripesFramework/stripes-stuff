@@ -8,8 +8,15 @@
 
 <body>
     
-    <s:url var="sessionLink" beanclass="org.stripesstuff.examples.session.CounterAction"/>
-    <a href="${sessionLink}">Session plugin example</a>
+    <div>
+        <s:url var="sessionLink" beanclass="org.stripesstuff.examples.session.CounterAction"/>
+        <a href="${sessionLink}">Session plugin example</a>
+    </div>
+    
+    <div>
+        <s:url var="waitPageLink" beanclass="org.stripesstuff.examples.waitpage.SlowAction"/>
+        <a href="${waitPageLink}">Wait page plugin example</a>
+    </div>
     
 </body>
 </html>
