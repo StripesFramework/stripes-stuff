@@ -78,6 +78,39 @@ public class SlowAction implements ActionBean {
         complete = true;
         return new ForwardResolution("/WEB-INF/pages/waitpage/index.jsp");
     }
+    /**
+     * Execute a slow event with an AJAX updater.
+     * @return index page
+     */
+    @HandlesEvent("slowEventWithAjaxUpdater")
+    @WaitPage(path="/WEB-INF/pages/waitpage/ajaxwait.jsp", delay=1000, refresh=1000, ajax="/WEB-INF/pages/waitpage/ajax.jsp")
+    public Resolution slowEventWithAjaxUpdater() {
+        try {
+            Thread.sleep(1000);
+            progress = 10;
+            Thread.sleep(1000);
+            progress = 20;
+            Thread.sleep(1000);
+            progress = 30;
+            Thread.sleep(1000);
+            progress = 40;
+            Thread.sleep(1000);
+            progress = 50;
+            Thread.sleep(1000);
+            progress = 60;
+            Thread.sleep(1000);
+            progress = 70;
+            Thread.sleep(1000);
+            progress = 80;
+            Thread.sleep(1000);
+            progress = 90;
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+        }
+        progress = 100;
+        complete = true;
+        return new ForwardResolution("/WEB-INF/pages/waitpage/index.jsp");
+    }
     
     
     public int getProgress() {

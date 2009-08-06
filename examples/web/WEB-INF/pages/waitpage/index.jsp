@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://stripes.sourceforge.net/stripes.tld" %>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
 <html>
 <head>
 </head>
@@ -15,7 +17,12 @@
     </c:if>
     
     <s:form beanclass="org.stripesstuff.examples.waitpage.SlowAction" method="POST">
-        <s:submit name="slowEvent">Slow event...</s:submit>
+        <div>
+            <s:submit name="slowEvent">Slow event...</s:submit>
+        </div>
+        <div>
+            <s:submit name="slowEventWithAjaxUpdater">Slow event with ajax updater...</s:submit>
+        </div>
     </s:form>
     
 </body>
