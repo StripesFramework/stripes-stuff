@@ -774,62 +774,7 @@ public class WaitPageTest {
     }
     
     /**
-     * Test to see if action bean contains field values for form population.
-     * Since request coming from wait page is not the one used to run event, wait page request cannot contain field values.
-     * They will be lost if no action bean fields matches them.
-     * See WaitPageInterceptor documentation.
-     * @throws Exception
-     */
-    @Test(groups="waitpage")
-    public void requestContainsFields() throws Exception {
-        MockHttpSession session = new MockHttpSession(context);
-        
-        MockRoundtrip trip = new MockRoundtrip(context, AdderActionBean.class, session);
-        trip.addParameter("first", String.valueOf(1));
-        trip.addParameter("second", String.valueOf(2));
-        trip.setSourcePage("sourcePage.jsp");
-        trip.execute("oneRefreshAdd");
-        
-        // Simulate wait page.
-        String resolutionUrl = trip.getRedirectUrl();
-        String actionBeanUrl = this.getActionBeanUrl(resolutionUrl, context);
-        Map<String, String> parameters = this.getParameters(resolutionUrl);
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
-        }
-        trip.execute();
-        Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
-        // Test that action bean is in request.
-        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
-        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
-        }
-        trip.execute();
-        Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
-        
-        // Fields should be in request and action bean.
-        AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
-        Assert.assertEquals(bean.getFirst(), 1);
-        Assert.assertEquals(bean.getSecond(), 2);
-        Assert.assertEquals(bean.getResult(), 3);
-        Assert.assertEquals(bean.getContext().getRequest().getParameter("first"), String.valueOf(1));
-        Assert.assertEquals(bean.getContext().getRequest().getParameter("second"), String.valueOf(2));
-        // Since request in trip is not the request used before wait page, it is impossible to test parameters in trip's request
-        
-        // Test that action bean is in request.
-        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
-        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
-        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
-    }
-    
-    /**
-     * Test that request header, parameter and attributes are available in event.
+     * Test that session attributes are available in event.
      * @throws Exception
      */
     @Test(groups="waitpage")
@@ -871,7 +816,7 @@ public class WaitPageTest {
         Assert.assertNotNull(trip.getRequest().getAttribute("/RequestTest.action"), "Action bean must be save under it's URL");
     }
     /**
-     * Test that request header, parameter and attributes are available in event.
+     * Test that session attributes are available in event.
      * @throws Exception
      */
     @Test(groups="waitpage")

@@ -2,6 +2,7 @@ package org.stripesstuff.plugin.waitpage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,6 +21,7 @@ import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.util.CryptoUtil;
 import net.sourceforge.stripes.util.Log;
 import net.sourceforge.stripes.util.UrlBuilder;
+import net.sourceforge.stripes.validation.ValidationError;
 
 /**
  * Interceptor documentation is explained in {@link WaitPage} documentation.
@@ -77,8 +79,8 @@ public class WaitPageInterceptor implements Interceptor {
                 // Use action bean that will process event.
                 case ActionBeanResolution:
                     log.trace("injecting ActionBean");
-                    // Since context in current execution context is artificial, we will keep the one of the original request.
-                    //context.actionBean.setContext(executionContext.getActionBeanContext());
+                    // Since session can be lost from original request (Tomcat is a good example), request must be updated with the background request.
+                    context.actionBean.setContext(executionContext.getActionBeanContext());
                     executionContext.setActionBean(context.actionBean);
                     // Skip normal action bean resolution.
                     return null;
@@ -260,8 +262,12 @@ public class WaitPageInterceptor implements Interceptor {
                 log.trace("the processor is finished so we'll remove it from the map");
                 // Remove context since event completed and we will show resolution returned by event.
                 contexts.remove(context.hashCode());
-                // Since errors are are saved in request, context cannot be replaced or errors would be lost.
-                //context.actionBean.setContext(executionContext.getActionBeanContext());
+                // Copy errors from action bean's request to execution context request.
+                for (Map.Entry<String, List<ValidationError>> entry: context.actionBean.getContext().getValidationErrors().entrySet()) {
+                    executionContext.getActionBeanContext().getValidationErrors().addAll(entry.getKey(), entry.getValue());
+                }
+                // Replace request in action bean so that session will be valid.
+                context.actionBean.setContext(executionContext.getActionBeanContext());
                 if (context.throwable != null) {
                     // Event did not complete normally, it thrown an exception.
                     if (("".equals(context.annotation.error())) && (context.throwable instanceof Exception)) {

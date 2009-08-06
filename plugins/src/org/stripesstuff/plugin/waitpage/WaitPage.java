@@ -100,16 +100,20 @@ import net.sourceforge.stripes.action.ActionBeanContext;
  * once for the event invocation in background and once again when wait page refreshes.
  * </p>
  * <p>
- * The request present in action bean during event execution is the same request as if no WaitPage annotation is present.
- * So all headers, parameters and attributes set before event handling will be available in event.<br>
+ * It is recommended to use session instead of request to store attributes when using WaitPage.<br> 
+ * The request present in action bean during event execution is <strong>NOT</strong> the same request as the one in preceding lifecycle stages.
+ * So all headers and parameters set before event handling will <strong>NOT</strong> be available in event.<br>
  * <strong>
- * Request headers, parameters and attributes will be available in resolution only under action bean's context.<br>
+ * Request attributes set before EventHandling stage may not be available in event.<br>
  * </strong>
  * <strong>
- * Once event completes, the request in action bean's context doesn't change and is different from the one in execution context.
- * This means that in a JSP action bean context's request is not the same as page context's request. So the following EL expression
- * will be false <code>${actionBean.context.request eq pageContext.request}</code>.<br>
- * Form tags values must be coming from action bean since no request parameter will be available.<br>
+ * Request headers and parameters will not be available in resolution.<br>
+ * </strong>
+ * <strong>
+ * Request attributes set before resolution stage may not be available in resolution.<br>
+ * </strong>
+ * <strong>
+ * Form tags values must be coming from action bean since no request parameter will be available.
  * </strong>
  * </p>
  * 

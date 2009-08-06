@@ -57,6 +57,7 @@ public class RequestTestActionBean implements ActionBean {
     @Before(stages=LifecycleStage.HandlerResolution)
     public void addHandlerResolutionAttribute() {
         context.getRequest().setAttribute("HandlerResolution", "HandlerResolutionAttribute");
+        context.getRequest().getSession().setAttribute("HandlerResolution", "HandlerResolutionAttribute");
     }
     /**
      * Add an attribute that name matches stage.
@@ -64,6 +65,7 @@ public class RequestTestActionBean implements ActionBean {
     @Before(stages=LifecycleStage.BindingAndValidation)
     public void addBindingAndValidationAttribute() {
         context.getRequest().setAttribute("BindingAndValidation", "BindingAndValidationAttribute");
+        context.getRequest().getSession().setAttribute("BindingAndValidation", "BindingAndValidationAttribute");
     }
     /**
      * Add an attribute that name matches stage.
@@ -71,6 +73,7 @@ public class RequestTestActionBean implements ActionBean {
     @Before(stages=LifecycleStage.CustomValidation)
     public void addCustomValidationAttribute() {
         context.getRequest().setAttribute("CustomValidation", "CustomValidationAttribute");
+        context.getRequest().getSession().setAttribute("CustomValidation", "CustomValidationAttribute");
     }
     /**
      * @return index.jsp
@@ -80,12 +83,12 @@ public class RequestTestActionBean implements ActionBean {
     @WaitPage(path="wait.jsp", refresh=100)
     public Resolution requestTest() throws InterruptedException {
         Thread.sleep(10);
-        Assert.assertEquals(context.getRequest().getHeader("TestHeader"), "test");
-        Assert.assertEquals(context.getRequest().getParameter("first"), String.valueOf(1));
-        Assert.assertEquals(context.getRequest().getParameter("second"), String.valueOf(2));
-        Assert.assertEquals(context.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(context.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(context.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        Assert.assertNull(context.getRequest().getHeader("TestHeader"));
+        Assert.assertNull(context.getRequest().getParameter("first"));
+        Assert.assertNull(context.getRequest().getParameter("second"));
+        Assert.assertEquals(context.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(context.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(context.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
         result = first + second;
         this.complete = true;
         return new ForwardResolution("index.jsp");
@@ -98,12 +101,12 @@ public class RequestTestActionBean implements ActionBean {
     @WaitPage(path="wait.jsp", refresh=100, ajax="ajax.jsp")
     public Resolution requestTestAjax() throws InterruptedException {
         Thread.sleep(10);
-        Assert.assertEquals(context.getRequest().getHeader("TestHeader"), "test");
-        Assert.assertEquals(context.getRequest().getParameter("first"), String.valueOf(1));
-        Assert.assertEquals(context.getRequest().getParameter("second"), String.valueOf(2));
-        Assert.assertEquals(context.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(context.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(context.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        Assert.assertNull(context.getRequest().getHeader("TestHeader"), "test");
+        Assert.assertNull(context.getRequest().getParameter("first"), String.valueOf(1));
+        Assert.assertNull(context.getRequest().getParameter("second"), String.valueOf(2));
+        Assert.assertEquals(context.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(context.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(context.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
         result = first + second;
         this.complete = true;
         return new ForwardResolution("index.jsp");
