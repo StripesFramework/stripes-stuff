@@ -19,7 +19,7 @@ function updater() {
         jQuery("span.progress").html(jQuery(content).filter("span.progress").html());
         jQuery("span.complete").html(jQuery(content).filter("span.complete").html());
         progress = jQuery(content).filter("span.progress").html();
-		complete = jQuery(content).filter("span.complete").html();
+        complete = jQuery(content).filter("span.complete").html();
         if (complete == "true") {
             window.location.reload();
         } else {
