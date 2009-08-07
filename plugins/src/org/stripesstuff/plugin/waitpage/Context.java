@@ -6,6 +6,7 @@ import java.net.URL;
 
 import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.controller.FlashScope;
 import net.sourceforge.stripes.util.Log;
 
 /**
@@ -52,6 +53,10 @@ public class Context implements Runnable {
      * Action bean on which event is invoked.
      */
     public ActionBean actionBean;
+    /**
+     * Flash scope in case some information was saved in it.
+     */
+    public FlashScope flashScope;
     /**
      * Event to invoke.
      */

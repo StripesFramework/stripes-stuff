@@ -2,17 +2,19 @@ package org.stripesstuff.plugin.waitpage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.controller.ExecutionContext;
+import net.sourceforge.stripes.controller.FlashScope;
 import net.sourceforge.stripes.controller.Interceptor;
 import net.sourceforge.stripes.controller.Intercepts;
 import net.sourceforge.stripes.controller.LifecycleStage;
@@ -21,7 +23,6 @@ import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.util.CryptoUtil;
 import net.sourceforge.stripes.util.Log;
 import net.sourceforge.stripes.util.UrlBuilder;
-import net.sourceforge.stripes.validation.ValidationError;
 
 /**
  * Interceptor documentation is explained in {@link WaitPage} documentation.
@@ -79,9 +80,12 @@ public class WaitPageInterceptor implements Interceptor {
                 // Use action bean that will process event.
                 case ActionBeanResolution:
                     log.trace("injecting ActionBean");
+                    // Copy request attributes.
+                    copyRequestAttributes(context.actionBean.getContext().getRequest(), executionContext.getActionBeanContext().getRequest());
                     // Since session can be lost from original request (Tomcat is a good example), request must be updated with the background request.
                     context.actionBean.setContext(executionContext.getActionBeanContext());
                     executionContext.setActionBean(context.actionBean);
+                    context.flashScope = FlashScope.getCurrent(context.actionBean.getContext().getRequest(), false);
                     // Skip normal action bean resolution.
                     return null;
                 // Select event to call.
@@ -183,6 +187,7 @@ public class WaitPageInterceptor implements Interceptor {
         context.eventHandler = executionContext.getHandler();
         context.annotation = annotation;
         context.resolution = new ForwardResolution(annotation.path());
+        context.flashScope = FlashScope.getCurrent(context.actionBean.getContext().getRequest(), false);
         int id = context.hashCode();
         
         // Id of context.
@@ -192,6 +197,9 @@ public class WaitPageInterceptor implements Interceptor {
         HttpServletRequest request = executionContext.getActionBeanContext().getRequest();
         UrlBuilder urlBuilder = new UrlBuilder(executionContext.getActionBeanContext().getLocale(), THREAD_URL, false);
         urlBuilder.addParameter(ID_PARAMETER, ids);
+        if (context.flashScope != null) {
+            urlBuilder.addParameter(StripesConstants.URL_KEY_FLASH_SCOPE_ID, String.valueOf(context.flashScope.key()));
+        }
         urlBuilder.addParameter(StripesConstants.URL_KEY_SOURCE_PAGE, CryptoUtil.encrypt(executionContext.getActionBeanContext().getSourcePage()));
         context.url = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), request.getContextPath() + urlBuilder.toString());
         context.cookies = request.getHeader("Cookie");
@@ -204,7 +212,16 @@ public class WaitPageInterceptor implements Interceptor {
         context.thread.start();
         
         // Redirect user to wait page.
-        return new RedirectResolution(StripesFilter.getConfiguration().getActionResolver().getUrlBinding(context.actionBean.getClass())).addParameter(ID_PARAMETER, ids);
+        return new RedirectResolution(StripesFilter.getConfiguration().getActionResolver().getUrlBinding(context.actionBean.getClass())) {
+            @Override
+            public RedirectResolution addParameter(String key, Object... value) {
+                // Leave flash scope to background request.
+                if (!StripesConstants.URL_KEY_FLASH_SCOPE_ID.equals(key)) {
+                    return super.addParameter(key, value);
+                }
+                return this;
+            }
+        }.addParameter(ID_PARAMETER, ids);
     }
     /**
      * Returns a new instance of context.
@@ -243,10 +260,18 @@ public class WaitPageInterceptor implements Interceptor {
             // Default is to go to wait page. This will be changed if an AJAX updater is used.
             // If event completed, this will be the resolution returned by event.
             Resolution resolution = context.resolution;
+            // Action to use is the action bean on which event is invoked.
+            executionContext.setActionBean(context.actionBean);
             // Save action bean in request scope to make it available in JSP.
             executionContext.getActionBeanContext().getRequest().setAttribute("actionBean", context.actionBean);
             // Set action bean in request so form will be populated.
             executionContext.getActionBeanContext().getRequest().setAttribute(StripesFilter.getConfiguration().getActionResolver().getUrlBinding(context.actionBean.getClass()), context.actionBean);
+            // Copy request attributes.
+            copyRequestAttributes(context.actionBean.getContext().getRequest(), executionContext.getActionBeanContext().getRequest());
+            // Copy flash scope/messages from action bean's context to execution context.
+            if (context.flashScope != null) {
+                this.copyFlashScope(context.flashScope, FlashScope.getCurrent(executionContext.getActionBeanContext().getRequest(), true));
+            }
             
             if (executionContext.getActionBeanContext().getRequest().getParameter(AJAX) != null)
             {
@@ -262,12 +287,11 @@ public class WaitPageInterceptor implements Interceptor {
                 log.trace("the processor is finished so we'll remove it from the map");
                 // Remove context since event completed and we will show resolution returned by event.
                 contexts.remove(context.hashCode());
-                // Copy errors from action bean's request to execution context request.
-                for (Map.Entry<String, List<ValidationError>> entry: context.actionBean.getContext().getValidationErrors().entrySet()) {
-                    executionContext.getActionBeanContext().getValidationErrors().addAll(entry.getKey(), entry.getValue());
-                }
+                // Copy errors from action bean's context to execution context.
+                this.copyErrors(context.actionBean.getContext(), executionContext.getActionBeanContext());
                 // Replace request in action bean so that session will be valid.
                 context.actionBean.setContext(executionContext.getActionBeanContext());
+                
                 if (context.throwable != null) {
                     // Event did not complete normally, it thrown an exception.
                     if (("".equals(context.annotation.error())) && (context.throwable instanceof Exception)) {
@@ -285,11 +309,39 @@ public class WaitPageInterceptor implements Interceptor {
             // Since context in current execution context is artificial, we should not update context in action bean as it would make action bean in other thread inconsistent.
             //context.actionBean.setContext(executionContext.getActionBeanContext());
             
-            // Action to use is the action bean on which event is invoked.
-            executionContext.setActionBean(context.actionBean);
-            
             // Go to wait page or execute resolution from event, if it completed.
             return resolution;
+        }
+    }
+    
+    /**
+     * Copy errors from a context to another context.
+     * @param source source containing errors to copy
+     * @param destination where errors will be copied
+     */
+    protected void copyErrors(ActionBeanContext source, ActionBeanContext destination) {
+        destination.getValidationErrors().putAll(source.getValidationErrors());
+    }
+    /**
+     * Copy source flash scope content (including messages) from to destination flash scope.
+     * @param source flash scope to copy
+     * @param destination where source flash scope content will be copied
+     */
+    protected void copyFlashScope(FlashScope source, FlashScope destination) {
+        destination.putAll(source);
+    }
+    /**
+     * Copy all attributes from source request to destination request.
+     * @param source request to copy
+     * @param destination where source request attributes will be copied
+     */
+    protected void copyRequestAttributes(HttpServletRequest source, HttpServletRequest destination) {
+        Enumeration<?> enumeration = source.getAttributeNames();
+        while (enumeration.hasMoreElements()) {
+            String key = (String) enumeration.nextElement();
+            if (!StripesConstants.REQ_ATTR_CURRENT_FLASH_SCOPE.equals(key)) {
+                destination.setAttribute(key, source.getAttribute(key));
+            }
         }
     }
 }

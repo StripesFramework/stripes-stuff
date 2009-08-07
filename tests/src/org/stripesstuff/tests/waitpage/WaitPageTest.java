@@ -9,18 +9,24 @@ package org.stripesstuff.tests.waitpage;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.stripesstuff.tests.waitpage.action.AdderActionBean;
+import org.stripesstuff.tests.waitpage.action.MessagesActionBean;
 import org.stripesstuff.tests.waitpage.action.RequestTestActionBean;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import net.sourceforge.stripes.action.Message;
 import net.sourceforge.stripes.controller.DispatcherServlet;
+import net.sourceforge.stripes.controller.StripesConstants;
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockRoundtrip;
@@ -798,6 +804,13 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test to see if attributes are in request/session.
+        Assert.assertEquals(trip.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
         // Test that action bean is in request.
         Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
         Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
@@ -809,6 +822,15 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
+        // Test to see if attributes are in request/session.
+        Assert.assertEquals(trip.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("EventHandling"), "EventHandlingAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("EventHandling"), "EventHandlingAttribute");
         // Test that action bean is in request.
         Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
         Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
@@ -840,6 +862,13 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test to see if attributes are in request/session.
+        Assert.assertEquals(trip.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
         // Test that action bean is in request.
         Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
         Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
@@ -852,6 +881,13 @@ public class WaitPageTest {
         trip.addParameter("ajax", "true");
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "ajax.jsp");
+        // Test to see if attributes are in request/session.
+        Assert.assertEquals(trip.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
         // Test that action bean is in request.
         Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
         Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
@@ -865,12 +901,102 @@ public class WaitPageTest {
         }
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
+        // Test to see if attributes are in request/session.
+        Assert.assertEquals(trip.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getAttribute("EventHandling"), "EventHandlingAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        Assert.assertEquals(trip.getRequest().getSession().getAttribute("EventHandling"), "EventHandlingAttribute");
         // Test that action bean is in request.
         Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
         Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
         Assert.assertEquals(trip.getRequest().getAttribute("/RequestTest.action"), trip.getActionBean(RequestTestActionBean.class));
         Assert.assertNotNull(trip.getRequest().getAttribute("/RequestTest.action"), "Action bean must be save under it's URL");
     }
+    
+    /**
+     * Test that session attributes are available in event.
+     * @throws Exception
+     */
+    @Test(groups="messages")
+    public void requestMessages() throws Exception {
+        MockHttpSession session = new MockHttpSession(context);
+        
+        MockRoundtrip trip = new MockRoundtrip(context, MessagesActionBean.class, session);
+        trip.addParameter("first", String.valueOf(1));
+        trip.addParameter("second", String.valueOf(2));
+        trip.setSourcePage("sourcePage.jsp");
+        trip.execute("add");
+        
+        // Simulate wait page.
+        String resolutionUrl = trip.getRedirectUrl();
+        String actionBeanUrl = this.getActionBeanUrl(resolutionUrl, context);
+        Map<String, String> parameters = this.getParameters(resolutionUrl);
+        trip = new MockRoundtrip(context, actionBeanUrl, session);
+        for (Map.Entry<String, String> entry: parameters.entrySet()) {
+            trip.addParameter(entry.getKey(), entry.getValue());
+        }
+        trip.execute();
+        Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
+        // Test that messages are available.
+        Assert.assertNotNull(this.getMessages(trip.getRequest(), StripesConstants.REQ_ATTR_MESSAGES), "No messages found in wait page");
+        Assert.assertNotNull(this.getMessages(trip.getRequest(), "BindingAndValidation"), "No messages found for key BindingAndValidation in wait page");
+        Assert.assertNotNull(this.getMessages(trip.getRequest(), "CustomValidation"), "No messages found for key CustomValidation in wait page");
+        Assert.assertFalse(this.getMessages(trip.getRequest(), StripesConstants.REQ_ATTR_MESSAGES).isEmpty(), "No messages found in wait page");
+        Assert.assertFalse(this.getMessages(trip.getRequest(), "BindingAndValidation").isEmpty(), "No messages found for key BindingAndValidation in wait page");
+        Assert.assertFalse(this.getMessages(trip.getRequest(), "CustomValidation").isEmpty(), "No messages found for key CustomValidation in wait page");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(MessagesActionBean.class));
+        Assert.assertEquals(trip.getRequest().getAttribute("/Messages.action"), trip.getActionBean(MessagesActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Messages.action"), "Action bean must be save under it's URL");
+        trip = new MockRoundtrip(context, actionBeanUrl, session);
+        for (Map.Entry<String, String> entry: parameters.entrySet()) {
+            trip.addParameter(entry.getKey(), entry.getValue());
+        }
+        trip.execute();
+        Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
+        // Test that messages are available.
+        Assert.assertNotNull(this.getMessages(trip.getRequest(), StripesConstants.REQ_ATTR_MESSAGES), "No messages found in result page");
+        Assert.assertNotNull(this.getMessages(trip.getRequest(), "BindingAndValidation"), "No messages found for key BindingAndValidation in result page");
+        Assert.assertNotNull(this.getMessages(trip.getRequest(), "CustomValidation"), "No messages found for key CustomValidation in result page");
+        Assert.assertNotNull(this.getMessages(trip.getRequest(), "EventHandling"), "No messages found for key EventHandling in result page");
+        Assert.assertNotNull(this.getMessages(trip.getRequest(), "add"), "No messages found for key add in result page");
+        Assert.assertFalse(this.getMessages(trip.getRequest(), StripesConstants.REQ_ATTR_MESSAGES).isEmpty(), "No messages found in result page");
+        Assert.assertFalse(this.getMessages(trip.getRequest(), "BindingAndValidation").isEmpty(), "No messages found for key BindingAndValidation in result page");
+        Assert.assertFalse(this.getMessages(trip.getRequest(), "CustomValidation").isEmpty(), "No messages found for key CustomValidation in result page");
+        Assert.assertFalse(this.getMessages(trip.getRequest(), "EventHandling").isEmpty(), "No messages found for key EventHandling in result page");
+        Assert.assertFalse(this.getMessages(trip.getRequest(), "add").isEmpty(), "No messages found for key add in result page");
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(MessagesActionBean.class));
+        Assert.assertEquals(trip.getRequest().getAttribute("/Messages.action"), trip.getActionBean(MessagesActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Messages.action"), "Action bean must be save under it's URL");
+    }
+    /**
+     * Gets the list of messages that will be displayed by the tag.  Looks first in the request
+     * under the specified key, and if none are found, then looks in session under the same key.
+     *
+     * @return List<Message> a possibly null list of messages to display
+     */
+    @SuppressWarnings("unchecked")
+    protected List<Message> getMessages(HttpServletRequest request, String key) {
+        List<Message> messages = (List<Message>) request.getAttribute(key);
+
+        if (messages == null) {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                messages = (List<Message>) session.getAttribute(key);
+                session.removeAttribute(key);
+            }
+        }
+
+        return messages;
+    }
+    
     
     /**
      * Returns action bean URL part of URL.

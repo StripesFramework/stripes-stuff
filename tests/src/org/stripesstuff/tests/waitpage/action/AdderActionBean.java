@@ -58,7 +58,7 @@ public class AdderActionBean implements ActionBean {
      */
     @DefaultHandler
     @HandlesEvent("shortAdd")
-    @WaitPage(path="wait.jsp", delay=100, refresh=100)
+    @WaitPage(path="wait.jsp", delay=1000, refresh=1000)
     public Resolution shortAdd() {
         result = first + second;
         return new ForwardResolution("index.jsp");
@@ -69,9 +69,9 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("oneRefreshAdd")
-    @WaitPage(path="wait.jsp", delay=100, refresh=100)
+    @WaitPage(path="wait.jsp", delay=1000, refresh=1000)
     public Resolution oneRefreshAdd() throws InterruptedException {
-        Thread.sleep(110);
+        Thread.sleep(1200);
         result = first + second;
         return new ForwardResolution("index.jsp");
     }
@@ -81,9 +81,9 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("twoRefreshAdd")
-    @WaitPage(path="wait.jsp", delay=100, refresh=100)
+    @WaitPage(path="wait.jsp", delay=1000, refresh=1000)
     public Resolution twoRefreshAdd() throws InterruptedException {
-        Thread.sleep(210);
+        Thread.sleep(2200);
         result = first + second;
         return new ForwardResolution("index.jsp");
     }
@@ -92,7 +92,7 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("shortException")
-    @WaitPage(path="wait.jsp", delay=100, refresh=100)
+    @WaitPage(path="wait.jsp", delay=1000, refresh=1000)
     public Resolution shortException() throws InterruptedException {
         throw new RuntimeException("this method always fail");
     }
@@ -101,9 +101,9 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("oneRefreshException")
-    @WaitPage(path="wait.jsp", delay=100, refresh=100)
+    @WaitPage(path="wait.jsp", delay=1000, refresh=1000)
     public Resolution oneRefreshException() throws InterruptedException {
-        Thread.sleep(110);
+        Thread.sleep(1200);
         throw new RuntimeException("this method always fail");
     }
     /**
@@ -112,7 +112,7 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("shortExceptionWithErrorPage")
-    @WaitPage(path="wait.jsp", delay=100, refresh=100, error="error.jsp")
+    @WaitPage(path="wait.jsp", delay=1000, refresh=1000, error="error.jsp")
     public Resolution shortExceptionWithErrorPage() throws InterruptedException {
         throw new RuntimeException("this method always fail");
     }
@@ -122,9 +122,9 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("oneRefreshExceptionWithErrorPage")
-    @WaitPage(path="wait.jsp", delay=100, refresh=100, error="error.jsp")
+    @WaitPage(path="wait.jsp", delay=1000, refresh=1000, error="error.jsp")
     public Resolution oneRefreshExceptionWithErrorPage() throws InterruptedException {
-        Thread.sleep(110);
+        Thread.sleep(1200);
         throw new RuntimeException("this method always fail");
     }
     /**
@@ -133,7 +133,7 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("shortAjaxUpdater")
-    @WaitPage(path="wait.jsp", delay=100, refresh=100, ajax="ajax.jsp")
+    @WaitPage(path="wait.jsp", delay=1000, refresh=1000, ajax="ajax.jsp")
     public Resolution shortAjaxUpdater() throws InterruptedException {
         result = first + second;
         this.complete = true;
@@ -145,9 +145,9 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("oneRefreshAjaxUpdater")
-    @WaitPage(path="wait.jsp", delay=100, refresh=100, ajax="ajax.jsp")
+    @WaitPage(path="wait.jsp", delay=1000, refresh=1000, ajax="ajax.jsp")
     public Resolution oneRefreshAjaxUpdater() throws InterruptedException {
-        Thread.sleep(220);
+        Thread.sleep(2200);
         result = first + second;
         this.complete = true;
         return new ForwardResolution("index.jsp");
@@ -159,9 +159,9 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("oneRefreshAddNoDelay")
-    @WaitPage(path="wait.jsp", refresh=100)
+    @WaitPage(path="wait.jsp", refresh=1000)
     public Resolution oneRefreshAddNoDelay() throws InterruptedException {
-        Thread.sleep(10);
+        Thread.sleep(200);
         result = first + second;
         return new ForwardResolution("index.jsp");
     }
@@ -172,9 +172,9 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("sourcePage")
-    @WaitPage(path="wait.jsp", refresh=100)
+    @WaitPage(path="wait.jsp", refresh=1000)
     public Resolution sourcePage() throws InterruptedException {
-        Thread.sleep(10);
+        Thread.sleep(200);
         result = first + second;
         return context.getSourcePageResolution();
     }
@@ -194,9 +194,9 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("validationError")
-    @WaitPage(path="wait.jsp", refresh=100)
+    @WaitPage(path="wait.jsp", refresh=1000)
     public Resolution validationError() throws InterruptedException {
-        Thread.sleep(10);
+        Thread.sleep(200);
         context.getValidationErrors().addGlobalError(new SimpleError("Event could not complete normally."));
         return context.getSourcePageResolution();
     }
@@ -208,9 +208,9 @@ public class AdderActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("validationErrorAjax")
-    @WaitPage(path="wait.jsp", refresh=100, ajax="ajax.jsp")
+    @WaitPage(path="wait.jsp", refresh=1000, ajax="ajax.jsp")
     public Resolution validationErrorAjax() throws InterruptedException {
-        Thread.sleep(10);
+        Thread.sleep(200);
         context.getValidationErrors().addGlobalError(new SimpleError("Event could not complete normally."));
         this.complete = true;
         return context.getSourcePageResolution();

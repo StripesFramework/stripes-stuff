@@ -80,15 +80,20 @@ public class RequestTestActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("requestTest")
-    @WaitPage(path="wait.jsp", refresh=100)
+    @WaitPage(path="wait.jsp", refresh=1000)
     public Resolution requestTest() throws InterruptedException {
-        Thread.sleep(10);
+        Thread.sleep(200);
         Assert.assertNull(context.getRequest().getHeader("TestHeader"));
         Assert.assertNull(context.getRequest().getParameter("first"));
         Assert.assertNull(context.getRequest().getParameter("second"));
+        Assert.assertEquals(context.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(context.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(context.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
         Assert.assertEquals(context.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
         Assert.assertEquals(context.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
         Assert.assertEquals(context.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        context.getRequest().setAttribute("EventHandling", "EventHandlingAttribute");
+        context.getRequest().getSession().setAttribute("EventHandling", "EventHandlingAttribute");
         result = first + second;
         this.complete = true;
         return new ForwardResolution("index.jsp");
@@ -98,15 +103,20 @@ public class RequestTestActionBean implements ActionBean {
      * @throws InterruptedException
      */
     @HandlesEvent("requestTestAjax")
-    @WaitPage(path="wait.jsp", refresh=100, ajax="ajax.jsp")
+    @WaitPage(path="wait.jsp", refresh=1000, ajax="ajax.jsp")
     public Resolution requestTestAjax() throws InterruptedException {
-        Thread.sleep(10);
+        Thread.sleep(200);
         Assert.assertNull(context.getRequest().getHeader("TestHeader"), "test");
         Assert.assertNull(context.getRequest().getParameter("first"), String.valueOf(1));
         Assert.assertNull(context.getRequest().getParameter("second"), String.valueOf(2));
+        Assert.assertEquals(context.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
+        Assert.assertEquals(context.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
+        Assert.assertEquals(context.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
         Assert.assertEquals(context.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
         Assert.assertEquals(context.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
         Assert.assertEquals(context.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        context.getRequest().setAttribute("EventHandling", "EventHandlingAttribute");
+        context.getRequest().getSession().setAttribute("EventHandling", "EventHandlingAttribute");
         result = first + second;
         this.complete = true;
         return new ForwardResolution("index.jsp");
