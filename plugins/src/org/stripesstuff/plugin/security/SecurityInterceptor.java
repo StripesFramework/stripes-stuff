@@ -32,7 +32,10 @@ import net.sourceforge.stripes.util.Log;
  * @see SecurityManager
  * @see SecurityHandler
  */
-@Intercepts({LifecycleStage.BindingAndValidation, LifecycleStage.CustomValidation, LifecycleStage.EventHandling, LifecycleStage.ResolutionExecution})
+@Intercepts({
+		LifecycleStage.BindingAndValidation, LifecycleStage.CustomValidation, LifecycleStage.EventHandling,
+		LifecycleStage.ResolutionExecution
+})
 public class SecurityInterceptor
 		implements Interceptor, ConfigurableComponent
 {
@@ -73,11 +76,14 @@ public class SecurityInterceptor
 			// Ask the BootstrapPropertyResolver for a subclass of SecurityManager.
 			// BootstrapPropertyResolver will look in web.xml first then scan the
 			// classpath if the class wasn't specified in web.xml
-			
-			Class<? extends SecurityManager> clazz = resolver.getClassProperty(SECURITY_MANAGER_CLASS, SecurityManager.class);
+
+			Class<? extends SecurityManager> clazz = resolver.getClassProperty(SECURITY_MANAGER_CLASS,
+			                                                                   SecurityManager.class);
 
 			if (clazz != null)
-				securityManager = (SecurityManager) clazz.newInstance();
+			{
+				securityManager = clazz.newInstance();
+			}
 		}
 		catch (Exception e)
 		{
@@ -151,10 +157,12 @@ public class SecurityInterceptor
 	{
 		Resolution resolution = executionContext.proceed();
 
-		// We're handling binding and/or validation. If an error occured, check if access is allowed.
-		// If explicitly denied, access is denied (as showing errors would both be pointless and an information leak).
+		// We're handling binding and/or validation. If there are errors and a resolution to display them, check if
+		// access is allowed. If explicitly denied, access is denied (as showing errors would both be pointless and an
+		// information leak).
 
-		if (resolution != null && Boolean.FALSE.equals(getAccessAllowed(executionContext)))
+		if (resolution != null && !executionContext.getActionBeanContext().getValidationErrors().isEmpty() &&
+		    Boolean.FALSE.equals(getAccessAllowed(executionContext)))
 		{
 			// If the security manager denies access, deny access.
 
