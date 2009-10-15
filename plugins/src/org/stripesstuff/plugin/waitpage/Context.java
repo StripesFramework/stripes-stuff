@@ -54,9 +54,13 @@ public class Context implements Runnable {
      */
     public ActionBean actionBean;
     /**
-     * Flash scope in case some information was saved in it.
+     * Flash scope coming from Binding/Validation stages in case some information was saved in it.
      */
-    public FlashScope flashScope;
+    public FlashScope bindingFlashScope;
+    /**
+     * Flash scope coming from EventHandling stage in case some information was saved in it.
+     */
+    public FlashScope eventFlashScope;
     /**
      * Event to invoke.
      */

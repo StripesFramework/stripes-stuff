@@ -89,6 +89,13 @@ public class WaitPageTest {
             trip.addParameter(entry.getKey(), entry.getValue());
         }
         trip.execute();
+        while ("wait.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
+        }
         
         // Result page.
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
@@ -130,11 +137,13 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // In next request result should be available.
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
+        while ("wait.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
         }
-        trip.execute();
         
         // Result page.
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
@@ -179,11 +188,13 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // In next request result should be available.
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
+        while ("wait.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
         }
-        trip.execute();
         
         // Result page.
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
@@ -214,13 +225,15 @@ public class WaitPageTest {
         String resolutionUrl = trip.getRedirectUrl();
         String actionBeanUrl = this.getActionBeanUrl(resolutionUrl, context);
         Map<String, String> parameters = this.getParameters(resolutionUrl);
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
-        }
         try {
+            while (trip.getForwardUrl() == null || "wait.jsp".equals(trip.getForwardUrl())) {
+                trip = new MockRoundtrip(context, actionBeanUrl, session);
+                for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                    trip.addParameter(entry.getKey(), entry.getValue());
+                }
+                trip.execute();
+            }
             // We except an exception to be thrown.
-            trip.execute();
             Assert.fail("No exception thrown when it was supposed to");
         } catch (Exception e) {
         }
@@ -261,13 +274,15 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // In next request exception should be thrown.
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
-        }
         try {
+            while ("wait.jsp".equals(trip.getForwardUrl())) {
+                trip = new MockRoundtrip(context, actionBeanUrl, session);
+                for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                    trip.addParameter(entry.getKey(), entry.getValue());
+                }
+                trip.execute();
+            }
             // We except an exception to be thrown.
-            trip.execute();
             Assert.fail("No exception thrown when it was supposed to");
         } catch (Exception e) {
         }
@@ -302,6 +317,13 @@ public class WaitPageTest {
             trip.addParameter(entry.getKey(), entry.getValue());
         }
         trip.execute();
+        while ("wait.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
+        }
         Assert.assertEquals(trip.getForwardUrl(), "error.jsp");
         Assert.assertNotNull(trip.getRequest().getAttribute("exception"), "Exception no saved as a request attribute");
         Assert.assertTrue(trip.getRequest().getAttribute("exception") instanceof Exception, "Exception no saved as a request attribute");
@@ -343,11 +365,13 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // In next request error page should be returned.
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
+        while ("wait.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
         }
-        trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "error.jsp");
         Assert.assertNotNull(trip.getRequest().getAttribute("exception"), "Exception no saved as a request attribute");
         Assert.assertTrue(trip.getRequest().getAttribute("exception") instanceof Exception, "Exception no saved as a request attribute");
@@ -381,6 +405,13 @@ public class WaitPageTest {
             trip.addParameter(entry.getKey(), entry.getValue());
         }
         trip.execute();
+        while ("ajax.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
+        }
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
         AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
         Assert.assertEquals(bean.getResult(), 3);
@@ -454,11 +485,13 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // Refresh page to get result.
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
+        while ("ajax.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
         }
-        trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
         bean = trip.getActionBean(AdderActionBean.class);
         Assert.assertEquals(bean.getResult(), 3);
@@ -501,11 +534,13 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // Result page should be available on second request.
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
+        while ("wait.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
         }
-        trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
         AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
         Assert.assertEquals(bean.getResult(), 3);
@@ -548,11 +583,13 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
         
         // In next request result should be available.
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
+        while ("wait.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
         }
-        trip.execute();
         
         // Result page.
         Assert.assertEquals(trip.getForwardUrl(), "sourcePage.jsp");
@@ -647,11 +684,13 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
         Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
         Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
+        while ("wait.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
         }
-        trip.execute();
         
         // Event should have failed and saved an error.
         Assert.assertEquals(trip.getForwardUrl(), "sourcePage.jsp");
@@ -761,11 +800,13 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
         Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
         Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
+        while ("ajax.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
         }
-        trip.execute();
         
         // Event should have failed and saved an error.
         Assert.assertEquals(trip.getForwardUrl(), "sourcePage.jsp");
@@ -784,7 +825,7 @@ public class WaitPageTest {
      * @throws Exception
      */
     @Test(groups="waitpage")
-    public void requestTest() throws Exception {
+    public void sessionTest() throws Exception {
         MockHttpSession session = new MockHttpSession(context);
         
         MockRoundtrip trip = new MockRoundtrip(context, RequestTestActionBean.class, session);
@@ -805,9 +846,6 @@ public class WaitPageTest {
         trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
         // Test to see if attributes are in request/session.
-        Assert.assertEquals(trip.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
         Assert.assertEquals(trip.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
         Assert.assertEquals(trip.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
         Assert.assertEquals(trip.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
@@ -816,96 +854,15 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
         Assert.assertEquals(trip.getRequest().getAttribute("/RequestTest.action"), trip.getActionBean(RequestTestActionBean.class));
         Assert.assertNotNull(trip.getRequest().getAttribute("/RequestTest.action"), "Action bean must be save under it's URL");
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
+        while ("wait.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
         }
-        trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
         // Test to see if attributes are in request/session.
-        Assert.assertEquals(trip.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("EventHandling"), "EventHandlingAttribute");
-        Assert.assertEquals(trip.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(trip.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getSession().getAttribute("EventHandling"), "EventHandlingAttribute");
-        // Test that action bean is in request.
-        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
-        Assert.assertEquals(trip.getRequest().getAttribute("/RequestTest.action"), trip.getActionBean(RequestTestActionBean.class));
-        Assert.assertNotNull(trip.getRequest().getAttribute("/RequestTest.action"), "Action bean must be save under it's URL");
-    }
-    /**
-     * Test that session attributes are available in event.
-     * @throws Exception
-     */
-    @Test(groups="waitpage")
-    public void requestTestAjax() throws Exception {
-        MockHttpSession session = new MockHttpSession(context);
-        
-        MockRoundtrip trip = new MockRoundtrip(context, RequestTestActionBean.class, session);
-        trip.getRequest().addHeader("TestHeader", "test");
-        trip.addParameter("first", String.valueOf(1));
-        trip.addParameter("second", String.valueOf(2));
-        trip.setSourcePage("sourcePage.jsp");
-        trip.execute("requestTestAjax");
-        
-        // Simulate wait page.
-        String resolutionUrl = trip.getRedirectUrl();
-        String actionBeanUrl = this.getActionBeanUrl(resolutionUrl, context);
-        Map<String, String> parameters = this.getParameters(resolutionUrl);
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
-        }
-        trip.execute();
-        Assert.assertEquals(trip.getForwardUrl(), "wait.jsp");
-        // Test to see if attributes are in request/session.
-        Assert.assertEquals(trip.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(trip.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
-        // Test that action bean is in request.
-        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
-        Assert.assertEquals(trip.getRequest().getAttribute("/RequestTest.action"), trip.getActionBean(RequestTestActionBean.class));
-        Assert.assertNotNull(trip.getRequest().getAttribute("/RequestTest.action"), "Action bean must be save under it's URL");
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
-        }
-        trip.addParameter("ajax", "true");
-        trip.execute();
-        Assert.assertEquals(trip.getForwardUrl(), "ajax.jsp");
-        // Test to see if attributes are in request/session.
-        Assert.assertEquals(trip.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(trip.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
-        // Test that action bean is in request.
-        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
-        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(RequestTestActionBean.class));
-        Assert.assertEquals(trip.getRequest().getAttribute("/RequestTest.action"), trip.getActionBean(RequestTestActionBean.class));
-        Assert.assertNotNull(trip.getRequest().getAttribute("/RequestTest.action"), "Action bean must be save under it's URL");
-        RequestTestActionBean bean = trip.getActionBean(RequestTestActionBean.class);
-        Assert.assertEquals(bean.isComplete(), true);
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
-        }
-        trip.execute();
-        Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
-        // Test to see if attributes are in request/session.
-        Assert.assertEquals(trip.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
-        Assert.assertEquals(trip.getRequest().getAttribute("EventHandling"), "EventHandlingAttribute");
         Assert.assertEquals(trip.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
         Assert.assertEquals(trip.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
         Assert.assertEquals(trip.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
@@ -953,11 +910,13 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(MessagesActionBean.class));
         Assert.assertEquals(trip.getRequest().getAttribute("/Messages.action"), trip.getActionBean(MessagesActionBean.class));
         Assert.assertNotNull(trip.getRequest().getAttribute("/Messages.action"), "Action bean must be save under it's URL");
-        trip = new MockRoundtrip(context, actionBeanUrl, session);
-        for (Map.Entry<String, String> entry: parameters.entrySet()) {
-            trip.addParameter(entry.getKey(), entry.getValue());
+        while ("wait.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
         }
-        trip.execute();
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
         // Test that messages are available.
         Assert.assertNotNull(this.getMessages(trip.getRequest(), StripesConstants.REQ_ATTR_MESSAGES), "No messages found in result page");

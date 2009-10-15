@@ -2,7 +2,6 @@ package org.stripesstuff.plugin.waitpage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -80,12 +79,9 @@ public class WaitPageInterceptor implements Interceptor {
                 // Use action bean that will process event.
                 case ActionBeanResolution:
                     log.trace("injecting ActionBean");
-                    // Copy request attributes.
-                    copyRequestAttributes(context.actionBean.getContext().getRequest(), executionContext.getActionBeanContext().getRequest());
                     // Since session can be lost from original request (Tomcat is a good example), request must be updated with the background request.
                     context.actionBean.setContext(executionContext.getActionBeanContext());
                     executionContext.setActionBean(context.actionBean);
-                    context.flashScope = FlashScope.getCurrent(context.actionBean.getContext().getRequest(), false);
                     // Skip normal action bean resolution.
                     return null;
                 // Select event to call.
@@ -114,6 +110,7 @@ public class WaitPageInterceptor implements Interceptor {
                             context.throwable = e;
                             context.status = Context.Status.COMPLETE;
                             context.actionBean.notifyAll();
+                            context.eventFlashScope = FlashScope.getCurrent(context.actionBean.getContext().getRequest(), false);
                         }
                         throw e;
                     }
@@ -125,6 +122,7 @@ public class WaitPageInterceptor implements Interceptor {
                         context.resolution = executionContext.getResolution();
                         context.status = Context.Status.COMPLETE;
                         context.actionBean.notifyAll();
+                        context.eventFlashScope = FlashScope.getCurrent(context.actionBean.getContext().getRequest(), false);
                     }
                     
                     // Use a default resolution to prevent processing the one event returned.
@@ -187,7 +185,7 @@ public class WaitPageInterceptor implements Interceptor {
         context.eventHandler = executionContext.getHandler();
         context.annotation = annotation;
         context.resolution = new ForwardResolution(annotation.path());
-        context.flashScope = FlashScope.getCurrent(context.actionBean.getContext().getRequest(), false);
+        context.bindingFlashScope = FlashScope.getCurrent(context.actionBean.getContext().getRequest(), false);
         int id = context.hashCode();
         
         // Id of context.
@@ -197,8 +195,8 @@ public class WaitPageInterceptor implements Interceptor {
         HttpServletRequest request = executionContext.getActionBeanContext().getRequest();
         UrlBuilder urlBuilder = new UrlBuilder(executionContext.getActionBeanContext().getLocale(), THREAD_URL, false);
         urlBuilder.addParameter(ID_PARAMETER, ids);
-        if (context.flashScope != null) {
-            urlBuilder.addParameter(StripesConstants.URL_KEY_FLASH_SCOPE_ID, String.valueOf(context.flashScope.key()));
+        if (context.bindingFlashScope != null) {
+            urlBuilder.addParameter(StripesConstants.URL_KEY_FLASH_SCOPE_ID, String.valueOf(context.bindingFlashScope.key()));
         }
         urlBuilder.addParameter(StripesConstants.URL_KEY_SOURCE_PAGE, CryptoUtil.encrypt(executionContext.getActionBeanContext().getSourcePage()));
         context.url = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), request.getContextPath() + urlBuilder.toString());
@@ -266,11 +264,12 @@ public class WaitPageInterceptor implements Interceptor {
             executionContext.getActionBeanContext().getRequest().setAttribute("actionBean", context.actionBean);
             // Set action bean in request so form will be populated.
             executionContext.getActionBeanContext().getRequest().setAttribute(StripesFilter.getConfiguration().getActionResolver().getUrlBinding(context.actionBean.getClass()), context.actionBean);
-            // Copy request attributes.
-            copyRequestAttributes(context.actionBean.getContext().getRequest(), executionContext.getActionBeanContext().getRequest());
             // Copy flash scope/messages from action bean's context to execution context.
-            if (context.flashScope != null) {
-                this.copyFlashScope(context.flashScope, FlashScope.getCurrent(executionContext.getActionBeanContext().getRequest(), true));
+            if (context.bindingFlashScope != null) {
+                this.copyFlashScope(context.bindingFlashScope, FlashScope.getCurrent(executionContext.getActionBeanContext().getRequest(), true));
+            }
+            if (context.eventFlashScope != null) {
+                this.copyFlashScope(context.eventFlashScope, FlashScope.getCurrent(executionContext.getActionBeanContext().getRequest(), true));
             }
             
             if (executionContext.getActionBeanContext().getRequest().getParameter(AJAX) != null)
@@ -329,19 +328,5 @@ public class WaitPageInterceptor implements Interceptor {
      */
     protected void copyFlashScope(FlashScope source, FlashScope destination) {
         destination.putAll(source);
-    }
-    /**
-     * Copy all attributes from source request to destination request.
-     * @param source request to copy
-     * @param destination where source request attributes will be copied
-     */
-    protected void copyRequestAttributes(HttpServletRequest source, HttpServletRequest destination) {
-        Enumeration<?> enumeration = source.getAttributeNames();
-        while (enumeration.hasMoreElements()) {
-            String key = (String) enumeration.nextElement();
-            if (!StripesConstants.REQ_ATTR_CURRENT_FLASH_SCOPE.equals(key)) {
-                destination.setAttribute(key, source.getAttribute(key));
-            }
-        }
     }
 }
