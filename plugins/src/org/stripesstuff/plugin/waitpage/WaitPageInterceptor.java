@@ -274,10 +274,6 @@ public class WaitPageInterceptor implements Interceptor {
             
             if (executionContext.getActionBeanContext().getRequest().getParameter(AJAX) != null)
             {
-                // Save action bean in request scope to make it available in JSP.
-                executionContext.getActionBeanContext().getRequest().setAttribute("actionBean", context.actionBean);
-                // Set action bean in request so form will be populated.
-                executionContext.getActionBeanContext().getRequest().setAttribute(StripesFilter.getConfiguration().getActionResolver().getUrlBinding(context.actionBean.getClass()), context.actionBean);
                 // We are using an AJAX updater. We need to go to AJAX page to allow javascript to validate if event completed.
                 resolution = new ForwardResolution(context.annotation.ajax().length() > 0 ? context.annotation.ajax() : context.annotation.path());
             }
