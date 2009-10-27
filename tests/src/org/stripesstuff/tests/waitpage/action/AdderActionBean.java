@@ -64,6 +64,15 @@ public class AdderActionBean implements ActionBean {
         return new ForwardResolution("index.jsp");
     }
     /**
+     * Addition should take less than delay.
+     * @return index.jsp
+     */
+    @HandlesEvent("shortAddNoDelay")
+    @WaitPage(path="wait.jsp", refresh=3000)
+    public Resolution shortAddNoDelay() {
+        return new ForwardResolution("index.jsp");
+    }
+    /**
      * Addition should demand exactly 1 refresh.
      * @return index.jsp
      * @throws InterruptedException
@@ -94,6 +103,15 @@ public class AdderActionBean implements ActionBean {
     @HandlesEvent("shortException")
     @WaitPage(path="wait.jsp", delay=1000, refresh=1000)
     public Resolution shortException() throws InterruptedException {
+        throw new RuntimeException("this method always fail");
+    }
+    /**
+     * Addition that throws an exception before delay ends.
+     * @throws InterruptedException
+     */
+    @HandlesEvent("shortExceptionNoDelay")
+    @WaitPage(path="wait.jsp", refresh=1000)
+    public Resolution shortExceptionNoDelay() throws InterruptedException {
         throw new RuntimeException("this method always fail");
     }
     /**

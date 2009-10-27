@@ -51,8 +51,10 @@ public class WaitPageTest {
         
         // Add the Stripes Filter
         Map<String,String> filterParams = new HashMap<String,String>();
-        filterParams.put("Interceptor.Classes",
-                "org.stripesstuff.tests.waitpage.TestableWaitPageInterceptor");
+        filterParams.put("CoreInterceptor.Classes",
+                "org.stripesstuff.tests.waitpage.TestableWaitPageInterceptor," +
+                "net.sourceforge.stripes.controller.BeforeAfterMethodInterceptor," +
+                "net.sourceforge.stripes.controller.HttpCacheInterceptor");
         filterParams.put("ActionResolver.Packages",
                 "org.stripesstuff.tests.waitpage.action");
         context.addFilter(StripesFilter.class, "StripesFilter", filterParams);
@@ -101,6 +103,45 @@ public class WaitPageTest {
         Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
         AdderActionBean bean = trip.getActionBean(AdderActionBean.class);
         Assert.assertEquals(bean.getResult(), 3);
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
+    }
+    /**
+     * Result page should be returned just after redirect is called.
+     * @throws Exception
+     */
+    @Test(groups="waitpage")
+    public void shortAddNoDelay() throws Exception {
+        MockHttpSession session = new MockHttpSession(context);
+        
+        // First round trip redirect to wait page.
+        MockRoundtrip trip = new MockRoundtrip(context, AdderActionBean.class, session);
+        trip.addParameter("first", String.valueOf(1));
+        trip.addParameter("second", String.valueOf(2));
+        trip.execute("shortAddNoDelay");
+        
+        // Simulate wait page.
+        String resolutionUrl = trip.getRedirectUrl();
+        String actionBeanUrl = this.getActionBeanUrl(resolutionUrl, context);
+        Map<String, String> parameters = this.getParameters(resolutionUrl);
+        trip = new MockRoundtrip(context, actionBeanUrl, session);
+        for (Map.Entry<String, String> entry: parameters.entrySet()) {
+            trip.addParameter(entry.getKey(), entry.getValue());
+        }
+        trip.execute();
+        while ("wait.jsp".equals(trip.getForwardUrl())) {
+            trip = new MockRoundtrip(context, actionBeanUrl, session);
+            for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                trip.addParameter(entry.getKey(), entry.getValue());
+            }
+            trip.execute();
+        }
+        
+        // Result page.
+        Assert.assertEquals(trip.getForwardUrl(), "index.jsp");
         // Test that action bean is in request.
         Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
         Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
@@ -220,6 +261,42 @@ public class WaitPageTest {
         trip.addParameter("first", String.valueOf(1));
         trip.addParameter("second", String.valueOf(2));
         trip.execute("shortException");
+        
+        // Simulate wait page.
+        String resolutionUrl = trip.getRedirectUrl();
+        String actionBeanUrl = this.getActionBeanUrl(resolutionUrl, context);
+        Map<String, String> parameters = this.getParameters(resolutionUrl);
+        try {
+            while (trip.getForwardUrl() == null || "wait.jsp".equals(trip.getForwardUrl())) {
+                trip = new MockRoundtrip(context, actionBeanUrl, session);
+                for (Map.Entry<String, String> entry: parameters.entrySet()) {
+                    trip.addParameter(entry.getKey(), entry.getValue());
+                }
+                trip.execute();
+            }
+            // We except an exception to be thrown.
+            Assert.fail("No exception thrown when it was supposed to");
+        } catch (Exception e) {
+        }
+        
+        // Test that action bean is in request.
+        Assert.assertNotNull(trip.getRequest().getAttribute("actionBean"), "Action bean must be save in request");
+        Assert.assertEquals(trip.getRequest().getAttribute("actionBean"), trip.getActionBean(AdderActionBean.class));
+        Assert.assertNotNull(trip.getRequest().getAttribute("/Adder.action"), "Action bean must be save under it's URL");
+        Assert.assertEquals(trip.getRequest().getAttribute("/Adder.action"), trip.getActionBean(AdderActionBean.class));
+    }
+    /**
+     * An exception should be thrown when redirecting.
+     * @throws Exception
+     */
+    @Test(groups="waitpage", timeOut=3000)
+    public void shortExceptionNoDelay() throws Exception {
+        MockHttpSession session = new MockHttpSession(context);
+        
+        MockRoundtrip trip = new MockRoundtrip(context, AdderActionBean.class, session);
+        trip.addParameter("first", String.valueOf(1));
+        trip.addParameter("second", String.valueOf(2));
+        trip.execute("shortExceptionNoDelay");
         
         // Simulate wait page.
         String resolutionUrl = trip.getRedirectUrl();

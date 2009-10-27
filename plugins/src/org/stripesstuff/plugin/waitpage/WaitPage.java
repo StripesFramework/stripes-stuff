@@ -104,13 +104,13 @@ import net.sourceforge.stripes.action.ActionBeanContext;
  * The request present in action bean during event execution is <strong>NOT</strong> the same request as the one in preceding lifecycle stages.
  * So all headers and parameters set before event handling will <strong>NOT</strong> be available in event.<br>
  * <strong>
- * Request attributes set before EventHandling stage may not be available in event.<br>
+ * Request attributes set before EventHandling stage will not be available in event.<br>
  * </strong>
  * <strong>
  * Request headers and parameters will not be available in resolution.<br>
  * </strong>
  * <strong>
- * Request attributes set before resolution stage may not be available in resolution.<br>
+ * Request attributes set before resolution stage will not be available in resolution.<br>
  * </strong>
  * <strong>
  * Form tags values must be coming from action bean since no request parameter will be available.
@@ -129,13 +129,13 @@ public @interface WaitPage {
      */
     String path();
     /**
-     * Delay allowed for event to complete before sending user to wait page.<br>
+     * Delay in milliseconds allowed for event to complete before sending user to wait page.<br>
      * If event completes before delay is expired, the resolution returned by event will be executed directly and wait page
      * will never be shown.
      */
     int delay() default 0;
     /**
-     * Time between each wait page refresh.
+     * Time between each wait page refresh in milliseconds.
      */
     int refresh() default 0;
     /**

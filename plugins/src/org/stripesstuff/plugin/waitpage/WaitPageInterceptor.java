@@ -299,6 +299,8 @@ public class WaitPageInterceptor implements Interceptor {
                         resolution = new ForwardResolution(context.annotation.error());
                     }
                 }
+                // Stripes or user code may use executionContext.getResolution() to obtain resolution instead of returned resolution. So set resolution in executionContext too.
+                executionContext.setResolution(resolution);
             }
             
             // Since context in current execution context is artificial, we should not update context in action bean as it would make action bean in other thread inconsistent.

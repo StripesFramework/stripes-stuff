@@ -86,9 +86,9 @@ public class RequestTestActionBean implements ActionBean {
         Assert.assertNull(context.getRequest().getHeader("TestHeader"));
         Assert.assertNull(context.getRequest().getParameter("first"));
         Assert.assertNull(context.getRequest().getParameter("second"));
-        Assert.assertEquals(context.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(context.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(context.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        Assert.assertEquals(context.getRequest().getAttribute("HandlerResolution"), null);
+        Assert.assertEquals(context.getRequest().getAttribute("BindingAndValidation"), null);
+        Assert.assertEquals(context.getRequest().getAttribute("CustomValidation"), null);
         Assert.assertEquals(context.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
         Assert.assertEquals(context.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
         Assert.assertEquals(context.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
@@ -109,9 +109,9 @@ public class RequestTestActionBean implements ActionBean {
         Assert.assertNull(context.getRequest().getHeader("TestHeader"), "test");
         Assert.assertNull(context.getRequest().getParameter("first"), String.valueOf(1));
         Assert.assertNull(context.getRequest().getParameter("second"), String.valueOf(2));
-        Assert.assertEquals(context.getRequest().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
-        Assert.assertEquals(context.getRequest().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
-        Assert.assertEquals(context.getRequest().getAttribute("CustomValidation"), "CustomValidationAttribute");
+        Assert.assertEquals(context.getRequest().getAttribute("HandlerResolution"), null);
+        Assert.assertEquals(context.getRequest().getAttribute("BindingAndValidation"), null);
+        Assert.assertEquals(context.getRequest().getAttribute("CustomValidation"), null);
         Assert.assertEquals(context.getRequest().getSession().getAttribute("HandlerResolution"), "HandlerResolutionAttribute");
         Assert.assertEquals(context.getRequest().getSession().getAttribute("BindingAndValidation"), "BindingAndValidationAttribute");
         Assert.assertEquals(context.getRequest().getSession().getAttribute("CustomValidation"), "CustomValidationAttribute");
