@@ -37,7 +37,7 @@ import net.sourceforge.stripes.util.ReflectUtil;
 public class SessionStoreInterceptor implements Interceptor {
     
     /** Lazily filled in map of Class to fields annotated with Session. */
-    private static Map<Class<?>, Collection<Field>> fieldMap = new ConcurrentHashMap<Class<?>, Collection<Field>>();
+    private Map<Class<?>, Collection<Field>> fieldMap = new ConcurrentHashMap<Class<?>, Collection<Field>>();
     
     /**
      * Session attribute where map linking MaxTimeSaverThreads to keys is stored.
@@ -156,7 +156,7 @@ public class SessionStoreInterceptor implements Interceptor {
      * @param clazz Class.
      * @return All fields with Session annotation for a class.
      */
-    protected static Collection<Field> getSessionFields(Class<?> clazz) {
+    protected Collection<Field> getSessionFields(Class<?> clazz) {
         Collection<Field> fields = fieldMap.get(clazz);
         if (fields == null) {
             fields = ReflectUtil.getFields(clazz);
