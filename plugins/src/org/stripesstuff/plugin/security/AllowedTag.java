@@ -93,13 +93,25 @@ public class AllowedTag
 	{
 		// Retrieve the action bean and event handler to secure.
 
+		ActionBean actionBean;
 		if (bean == null)
 		{
-			bean = StripesConstants.REQ_ATTR_ACTION_BEAN;
+			// Search in page, request, session (if valid) and application scopes, in that order.
+			actionBean = (ActionBean)pageContext.findAttribute(StripesConstants.REQ_ATTR_ACTION_BEAN);
+			LOG.debug("Determining access for the action bean of the form: ", actionBean);
 		}
-		// Search in page, resuest, session (if valid) and application scopes, in order.
-		ActionBean actionBean = (ActionBean)pageContext.findAttribute(bean);
-		LOG.debug(String.format("Determining access for action bean \"%s\": %s", bean, actionBean));
+		else
+		{
+			// Search in page, request, session (if valid) and application scopes, in that order.
+			actionBean = (ActionBean)pageContext.findAttribute(bean);
+			LOG.debug("Determining access for action bean \"", bean, "\": ", actionBean);
+		}
+		if (actionBean == null)
+		{
+			throw new StripesJspException(
+					"Could not find the action bean. This means that either you specified the name \n" +
+					"of a bean that doesn't exist, or this tag is not used inside a Stripes Form.");
+		}
 
 		Method handler;
 		try
@@ -107,12 +119,12 @@ public class AllowedTag
 			if (event == null)
 			{
 				handler = StripesFilter.getConfiguration().getActionResolver().getDefaultHandler(actionBean.getClass());
-				LOG.debug(String.format("Found a handler for the default event: %s", handler));
+				LOG.debug("Found a handler for the default event: ", handler);
 			}
 			else
 			{
 				handler = StripesFilter.getConfiguration().getActionResolver().getHandler(actionBean.getClass(), event);
-				LOG.debug(String.format("Found a handler for event \"%s\": %s", event, handler));
+				LOG.debug("Found a handler for event \"", event, "\": %s", handler);
 			}
 		}
 		catch (StripesServletException e)
@@ -122,14 +134,13 @@ public class AllowedTag
 
 		// Get the judgement of the security manager.
 
-		SecurityManager securityManager =
-				(SecurityManager)pageContext.getAttribute(SecurityInterceptor.SECURITY_MANAGER,
-				                                          PageContext.REQUEST_SCOPE);
+		SecurityManager securityManager = (SecurityManager)pageContext.getAttribute(
+				SecurityInterceptor.SECURITY_MANAGER, PageContext.REQUEST_SCOPE);
 		boolean haveSecurityManager = securityManager != null;
 		boolean eventAllowed;
 		if (haveSecurityManager)
 		{
-			LOG.debug(String.format("Determining access using this security manager: %s", securityManager));
+			LOG.debug("Determining access using this security manager: ", securityManager);
 			eventAllowed = Boolean.TRUE.equals(securityManager.getAccessAllowed(actionBean, handler));
 		}
 		else
@@ -147,7 +158,7 @@ public class AllowedTag
 			eventAllowed = !eventAllowed;
 		}
 
-		LOG.debug(String.format("Access is %s.", eventAllowed ? "allowed" : "denied"));
+		LOG.debug("Access is ", eventAllowed ? "allowed" : "denied", '.');
 		return eventAllowed ? EVAL_BODY_AGAIN : SKIP_BODY;
 	}
 
