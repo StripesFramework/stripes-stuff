@@ -3,6 +3,7 @@ package org.stripesstuff.plugin.waitpage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -194,6 +195,14 @@ public class WaitPageInterceptor implements Interceptor {
         // Create background request to execute event.
         HttpServletRequest request = executionContext.getActionBeanContext().getRequest();
         UrlBuilder urlBuilder = new UrlBuilder(executionContext.getActionBeanContext().getLocale(), THREAD_URL, false);
+        
+        // Add parameters from the original request in case there were some parameters that weren't bound but are used
+        @SuppressWarnings({ "cast", "unchecked" })
+        Set<Map.Entry<String,String[]>> paramSet = (Set<Map.Entry<String,String[]>>) request.getParameterMap().entrySet();
+        for (Map.Entry<String,String[]> param : paramSet)
+            for (String value : param.getValue())
+                urlBuilder.addParameter(param.getKey(), value);
+        
         urlBuilder.addParameter(ID_PARAMETER, ids);
         if (context.bindingFlashScope != null) {
             urlBuilder.addParameter(StripesConstants.URL_KEY_FLASH_SCOPE_ID, String.valueOf(context.bindingFlashScope.key()));
