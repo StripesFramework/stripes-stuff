@@ -87,6 +87,10 @@ public class Context implements Runnable {
      * Cookies identifying user.
      */
     public String cookies;
+    /**
+     * Moment (in milliseconds) when context completed.
+     */
+    public Long completeMoment;
     
     /**
      * Invoke event in a background request.

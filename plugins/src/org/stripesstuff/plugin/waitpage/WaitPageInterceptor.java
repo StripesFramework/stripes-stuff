@@ -2,6 +2,7 @@ package org.stripesstuff.plugin.waitpage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,6 +14,8 @@ import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
+import net.sourceforge.stripes.config.ConfigurableComponent;
+import net.sourceforge.stripes.config.Configuration;
 import net.sourceforge.stripes.controller.ExecutionContext;
 import net.sourceforge.stripes.controller.FlashScope;
 import net.sourceforge.stripes.controller.Interceptor;
@@ -37,10 +40,14 @@ import net.sourceforge.stripes.util.UrlBuilder;
                 LifecycleStage.CustomValidation,
                 LifecycleStage.EventHandling,
                 LifecycleStage.ResolutionExecution})
-public class WaitPageInterceptor implements Interceptor {
+public class WaitPageInterceptor implements Interceptor, ConfigurableComponent {
     
     private static final Log log = Log.getInstance(WaitPageInterceptor.class);
     
+    /**
+     * Init parameter that we look for to configure CONTEXT_TIMEOUT.
+     */
+    public static final String CONTEXT_TIMEOUT_NAME = "WaitPageInterceptor.ContextTimeout";
     /**
      * Parameter used in wait page to find wait context.
      */
@@ -59,15 +66,28 @@ public class WaitPageInterceptor implements Interceptor {
      */
     private static final int DEFAULT_REFRESH_TIMEOUT = 60000;
     /**
+     * Default time allowed for user to access a completed context (in milliseconds).<br>
+     * Default timeout is 5 minutes.
+     */
+    private static final int DEFAULT_CONTEXT_TIMEOUT = 60000;
+    /**
      * Saved wait context.
      */
     private static Map<Integer, Context> contexts = new ConcurrentHashMap<Integer, Context>();
+    /**
+     * Time allowed for user to access a completed context (in milliseconds).<br>
+     * After that time, context are removed to allow garbage collection.
+     */
+    private long contextTimeout = DEFAULT_CONTEXT_TIMEOUT;
     
     
     /**
      * Intercepts execution to handle {@link WaitPage} annotation and invoke the event in a background request.
      */
     public Resolution intercept(ExecutionContext executionContext) throws Exception {
+        // Remove expired contexts.
+        removeExpired(contexts);
+        
         // Get wait context, if any.
         Context context = getContext(executionContext);
         LifecycleStage stage = executionContext.getLifecycleStage();
@@ -110,6 +130,7 @@ public class WaitPageInterceptor implements Interceptor {
                             log.trace("setting exception in context");
                             context.throwable = e;
                             context.status = Context.Status.COMPLETE;
+                            context.completeMoment = System.currentTimeMillis();
                             context.actionBean.notifyAll();
                             context.eventFlashScope = FlashScope.getCurrent(context.actionBean.getContext().getRequest(), false);
                         }
@@ -122,6 +143,7 @@ public class WaitPageInterceptor implements Interceptor {
                         log.trace("setting resolution in context");
                         context.resolution = executionContext.getResolution();
                         context.status = Context.Status.COMPLETE;
+                        context.completeMoment = System.currentTimeMillis();
                         context.actionBean.notifyAll();
                         context.eventFlashScope = FlashScope.getCurrent(context.actionBean.getContext().getRequest(), false);
                     }
@@ -335,5 +357,34 @@ public class WaitPageInterceptor implements Interceptor {
      */
     protected void copyFlashScope(FlashScope source, FlashScope destination) {
         destination.putAll(source);
+    }
+    /**
+     * Remove all contexts that are expired.
+     * @param contexts all contexts currently in memory
+     */
+    protected void removeExpired(Map<Integer, Context> contexts) {
+        Iterator<Context> contextsIter = contexts.values().iterator();
+        while (contextsIter.hasNext()) {
+            Context context = contextsIter.next();
+            if (context.completeMoment != null
+                    && System.currentTimeMillis() - context.completeMoment > contextTimeout) {
+                contextsIter.remove();
+            }
+        }
+    }
+    
+    /**
+     * Read context timeout, if any.
+     */
+    public void init(Configuration configuration) throws Exception {
+        if (configuration.getBootstrapPropertyResolver().getProperty(CONTEXT_TIMEOUT_NAME) != null) {
+            log.debug("Configuring context timeout with value ", configuration.getBootstrapPropertyResolver().getProperty(CONTEXT_TIMEOUT_NAME));
+            try {
+                contextTimeout = Long.parseLong(configuration.getBootstrapPropertyResolver().getProperty(CONTEXT_TIMEOUT_NAME));
+            } catch (NumberFormatException e) {
+                log.warn("Init parameter ", CONTEXT_TIMEOUT_NAME, " is not a parsable long, timeout will be ", " instead");
+                contextTimeout = DEFAULT_CONTEXT_TIMEOUT;
+            }
+        }
     }
 }

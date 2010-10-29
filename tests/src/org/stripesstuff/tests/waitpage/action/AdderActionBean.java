@@ -233,6 +233,15 @@ public class AdderActionBean implements ActionBean {
         this.complete = true;
         return context.getSourcePageResolution();
     }
+    /**
+     * Add 2 numbers with no {@link WaitPage} annotation.
+     * @return index.jsp
+     */
+    @HandlesEvent("addNoWait")
+    public Resolution addNoWait() {
+        result = first + second;
+        return new ForwardResolution("index.jsp");
+    }
     
     
     public int getResult() {
