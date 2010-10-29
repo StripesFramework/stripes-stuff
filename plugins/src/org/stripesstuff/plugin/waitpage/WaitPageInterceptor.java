@@ -73,7 +73,7 @@ public class WaitPageInterceptor implements Interceptor, ConfigurableComponent {
     /**
      * Saved wait context.
      */
-    private static Map<Integer, Context> contexts = new ConcurrentHashMap<Integer, Context>();
+    private Map<Integer, Context> contexts = new ConcurrentHashMap<Integer, Context>();
     /**
      * Time allowed for user to access a completed context (in milliseconds).<br>
      * After that time, context are removed to allow garbage collection.
