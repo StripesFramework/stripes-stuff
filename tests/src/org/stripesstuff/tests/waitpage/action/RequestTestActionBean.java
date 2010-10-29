@@ -84,8 +84,8 @@ public class RequestTestActionBean implements ActionBean {
     public Resolution requestTest() throws InterruptedException {
         Thread.sleep(200);
         Assert.assertNull(context.getRequest().getHeader("TestHeader"));
-        Assert.assertNull(context.getRequest().getParameter("first"));
-        Assert.assertNull(context.getRequest().getParameter("second"));
+        Assert.assertNotNull(context.getRequest().getParameter("first"));
+        Assert.assertNotNull(context.getRequest().getParameter("second"));
         Assert.assertEquals(context.getRequest().getAttribute("HandlerResolution"), null);
         Assert.assertEquals(context.getRequest().getAttribute("BindingAndValidation"), null);
         Assert.assertEquals(context.getRequest().getAttribute("CustomValidation"), null);
@@ -107,8 +107,8 @@ public class RequestTestActionBean implements ActionBean {
     public Resolution requestTestAjax() throws InterruptedException {
         Thread.sleep(200);
         Assert.assertNull(context.getRequest().getHeader("TestHeader"), "test");
-        Assert.assertNull(context.getRequest().getParameter("first"), String.valueOf(1));
-        Assert.assertNull(context.getRequest().getParameter("second"), String.valueOf(2));
+        Assert.assertNotNull(context.getRequest().getParameter("first"), String.valueOf(1));
+        Assert.assertNotNull(context.getRequest().getParameter("second"), String.valueOf(2));
         Assert.assertEquals(context.getRequest().getAttribute("HandlerResolution"), null);
         Assert.assertEquals(context.getRequest().getAttribute("BindingAndValidation"), null);
         Assert.assertEquals(context.getRequest().getAttribute("CustomValidation"), null);
