@@ -110,4 +110,40 @@ public class WaitPageExpiredTest {
         
         assertEquals(waitContexts.size(), 0);
     }
+    /**
+     * Expired contexts are removed automatically when they are expired.
+     * @throws Exception
+     */
+    @Test(groups="waitpage")
+    public void autoRemoveExpiredContextsLong() throws Exception {
+        MockHttpSession session = new MockHttpSession(context);
+        
+        // Add a wait context.
+        MockRoundtrip trip = new MockRoundtrip(context, AdderActionBean.class, session);
+        trip.addParameter("first", String.valueOf(1));
+        trip.addParameter("second", String.valueOf(2));
+        trip.execute("twoRefreshAdd");
+        
+        assertEquals(waitContexts.size(), 1);
+        
+        Thread.sleep(3000);
+        
+        // After 3 seconds, context should still be in memory.
+        trip = new MockRoundtrip(context, AdderActionBean.class, session);
+        trip.addParameter("first", String.valueOf(1));
+        trip.addParameter("second", String.valueOf(2));
+        trip.execute("addNoWait");
+        
+        assertEquals(waitContexts.size(), 1);
+        
+        Thread.sleep(3000);
+        
+        // After 6 seconds, context should be deleted when interceptor is called.
+        trip = new MockRoundtrip(context, AdderActionBean.class, session);
+        trip.addParameter("first", String.valueOf(1));
+        trip.addParameter("second", String.valueOf(2));
+        trip.execute("addNoWait");
+        
+        assertEquals(waitContexts.size(), 0);
+    }
 }

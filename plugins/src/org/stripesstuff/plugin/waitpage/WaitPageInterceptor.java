@@ -69,7 +69,7 @@ public class WaitPageInterceptor implements Interceptor, ConfigurableComponent {
      * Default time allowed for user to access a completed context (in milliseconds).<br>
      * Default timeout is 5 minutes.
      */
-    private static final int DEFAULT_CONTEXT_TIMEOUT = 60000;
+    private static final int DEFAULT_CONTEXT_TIMEOUT = 300000;
     /**
      * Saved wait context.
      */
