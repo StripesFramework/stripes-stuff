@@ -128,8 +128,8 @@
 	   protected="true"
 	   use="true"
 	   version="true">
-	    <link href="http://java.sun.com/javase/6/docs/api/"/>
-		<link href="http://java.sun.com/javaee/5/docs/api/"/>
+	    <link href="http://download.oracle.com/javase/6/docs/api/"/>
+		<link href="http://download.oracle.com/javaee/5/api/"/>
 		<link href="http://stripes.sourceforge.net/docs/current/javadoc/"/>
     </javadoc>
     <java fork="true" jar="${buildlib.dir}/tlddoc.jar" failonerror="true">
