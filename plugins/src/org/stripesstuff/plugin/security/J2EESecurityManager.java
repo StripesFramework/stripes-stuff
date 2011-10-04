@@ -115,17 +115,21 @@ public class J2EESecurityManager
 			RolesAllowed rolesAllowed = element.getAnnotation(RolesAllowed.class);
 			if (rolesAllowed != null)
 			{
-				// The element allows access if the user has one of the specified roles.
+				// Still need to check if the users is authorized
+				allowed = isUserAuthenticated(bean, handler);
 
-				allowed = false;
-
-				for (String role : rolesAllowed.value())
-				{
-					Boolean hasRole = hasRole(bean, handler, role);
-					if (hasRole != null && hasRole)
+				if (allowed == null || allowed.booleanValue()) {
+					
+					// The element allows access if the user has one of the specified roles.
+					allowed = false;
+					for (String role : rolesAllowed.value())
 					{
-						allowed = true;
-						break;
+						Boolean hasRole = hasRole(bean, handler, role);
+						if (hasRole != null && hasRole)
+						{
+							allowed = true;
+							break;
+						}
 					}
 				}
 			}
