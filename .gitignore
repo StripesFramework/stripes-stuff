@@ -1,0 +1,7 @@
+examples/Examples.iml
+plugins/Plugins.iml
+tests/Tests.iml
+.classpath
+.project
+_project.iml
+StripesStuff.ipr
