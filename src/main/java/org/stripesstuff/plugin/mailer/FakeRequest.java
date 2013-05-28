@@ -302,5 +302,6 @@ public class FakeRequest implements HttpServletRequest
 
 	public void setCharacterEncoding(String arg0) throws UnsupportedEncodingException
 	{
+        request.setCharacterEncoding(arg0);
 	}
 }
