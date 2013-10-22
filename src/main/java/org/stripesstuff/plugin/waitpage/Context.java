@@ -1,5 +1,6 @@
 package org.stripesstuff.plugin.waitpage;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -105,7 +106,13 @@ public class Context implements Runnable {
             log.trace("passing in cookies: ", cookies);
             connection.setRequestProperty("Cookie", cookies);
             // Invoke event in background.
-            connection.getContent();
+            byte[] buff = new byte[1024 * 4];
+            InputStream input = connection.getInputStream();
+            try {
+                while (input.read(buff) > -1);
+            } finally {
+                input.close();
+            }
         }
         catch (Exception e)
         {
