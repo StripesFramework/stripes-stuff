@@ -43,12 +43,14 @@
             <organization>IRCM</organization>
             <organizationUrl>http://www.ircm.qc.ca</organizationUrl>
             <roles>
+                <role>Owner</role>
                 <role>Developer</role>
             </roles>
             <timezone>-5</timezone>
         </developer>
         <developer>
             <name>Samuel Santos</name>
+            <email>samaxes@gmail.com</email>
             <url>http://www.samaxes.com/</url>
             <roles>
                 <role>Developer</role>
