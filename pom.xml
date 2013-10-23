@@ -10,7 +10,7 @@
 
     <groupId>org.stripesstuff</groupId>
     <artifactId>stripesstuff</artifactId>
-    <version>0.4.0-SNAPSHOT</version>
+    <version>0.4.0</version>
     <packaging>jar</packaging>
 
     <name>StripesStuff</name>
@@ -67,7 +67,8 @@
         <connection>scm:git:git://github.com/StripesFramework/stripes-stuff.git</connection>
         <developerConnection>scm:git:git@github.com:StripesFramework/stripes-stuff.git</developerConnection>
         <url>https://github.com/StripesFramework/stripes-stuff</url>
-    </scm>
+      <tag>0.4.0</tag>
+  </scm>
 
     <build>
         <pluginManagement>
@@ -168,7 +169,7 @@
                         </manifestEntries>
                     </archive>
                     <excludePackageNames>javax.annotation.security</excludePackageNames>
-                    <bottom>Copyright &#169; ${project.inceptionYear}-${maven.build.timestamp} Aaron Porter</bottom>
+                    <bottom>Copyright © ${project.inceptionYear}-${maven.build.timestamp} Aaron Porter</bottom>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${maven.compiler.source}</source>
                     <quiet>true</quiet>
