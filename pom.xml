@@ -10,7 +10,7 @@
 
     <groupId>org.stripesstuff</groupId>
     <artifactId>stripesstuff</artifactId>
-    <version>0.4.1</version>
+    <version>0.4.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>StripesStuff</name>
@@ -67,7 +67,7 @@
         <connection>scm:git:git://github.com/StripesFramework/stripes-stuff.git</connection>
         <developerConnection>scm:git:git@github.com:StripesFramework/stripes-stuff.git</developerConnection>
         <url>https://github.com/StripesFramework/stripes-stuff</url>
-      <tag>0.4.1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <build>
