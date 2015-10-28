@@ -116,6 +116,11 @@ public class SecurityInterceptor
 
 		if (securityManager != null)
 		{
+			// Add the security manager to the request.
+			// This is used (for example) by the security tag.
+			executionContext.getActionBeanContext().getRequest().setAttribute(SecurityInterceptor.SECURITY_MANAGER,
+                    securityManager);
+			
 			switch (executionContext.getLifecycleStage())
 			{
 				case BindingAndValidation:
@@ -216,12 +221,6 @@ public class SecurityInterceptor
 	protected Resolution interceptResolutionExecution(ExecutionContext executionContext)
 			throws Exception
 	{
-		// Before processing the resolution, add the security manager to the request.
-		// This is used (for example) by the security tag.
-
-		executionContext.getActionBeanContext().getRequest().setAttribute(SecurityInterceptor.SECURITY_MANAGER,
-		                                                                  securityManager);
-
 		return executionContext.proceed();
 	}
 
