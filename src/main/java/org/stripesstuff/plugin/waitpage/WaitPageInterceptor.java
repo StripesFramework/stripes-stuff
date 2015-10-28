@@ -356,7 +356,9 @@ public class WaitPageInterceptor implements Interceptor, ConfigurableComponent {
      * @param destination where source flash scope content will be copied
      */
     protected void copyFlashScope(FlashScope source, FlashScope destination) {
-        destination.putAll(source);
+    	for (Map.Entry<String,Object> entry: source.entrySet()) {
+            destination.put(entry.getKey(), entry.getValue());
+    	}
     }
     /**
      * Remove all contexts that are expired.
