@@ -1,9 +1,3 @@
-/*
- * <p>Title: StripesUtils</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2007</p>
- * <p>Company: Institut de recherches cliniques de Montr&eacute;al (IRCM)</p>
- */
 package org.stripesstuff.tests.session;
 
 import java.util.HashMap;
