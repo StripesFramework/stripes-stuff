@@ -169,7 +169,7 @@
                     <links>
                         <link>http://docs.oracle.com/javase/6/docs/api/</link>
                         <link>http://docs.oracle.com/javaee/5/api/</link>
-                        <link>http://stripes.sourceforge.net/docs/current/javadoc/</link>
+                        <link>https://stripesframework.ci.cloudbees.com/job/Stripes%201.5.8/javadoc/</link>
                     </links>
                 </configuration>
                 <executions>

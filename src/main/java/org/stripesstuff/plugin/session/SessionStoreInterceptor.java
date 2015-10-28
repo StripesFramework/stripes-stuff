@@ -175,6 +175,7 @@ public class SessionStoreInterceptor implements Interceptor {
     
     /**
      * Returns an object in session.
+     * @param session session.
      * @param key Key under which object is saved.
      * @return Object.
      * @deprecated Use {@link HttpSession#getAttribute(String)} instead.

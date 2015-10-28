@@ -70,6 +70,8 @@ public class DefaultResourceBundleFactory
 
 	/**
 	 * Returns the base name of the configured resource bundle.
+	 * 
+	 * @return base name of the configured resource bundle
 	 */
 	protected String getBaseName()
 	{

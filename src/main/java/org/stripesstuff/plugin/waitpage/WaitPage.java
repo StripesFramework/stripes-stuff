@@ -20,6 +20,7 @@ import net.sourceforge.stripes.action.ActionBeanContext;
  * </p>
  * <p>
  * The expected flow when using a simple wait page is:
+ * </p>
  * <ol>
  * <li>
  * ActionBeanResolution, HandlerResolution, BindingAndValidation, CustomValidation are executed the same way as if event didn't
@@ -41,7 +42,6 @@ import net.sourceforge.stripes.action.ActionBeanContext;
  * Event resolution is executed.
  * </li>
  * </ol>
- * </p>
  * <p>
  * If an AJAX updater is used, your page must have a way to known when to refresh itself. It can
  * be done by putting an indicator in your action bean that will be flagged once event completes.<br>
@@ -54,6 +54,7 @@ import net.sourceforge.stripes.action.ActionBeanContext;
  * </code>
  * Then your AJAX page must inform the AJAX updater to refresh wait page.<br>
  * The expected flow when using an AJAX updater is:
+ * </p>
  * <ol>
  * <li>
  * ActionBeanResolution, HandlerResolution, BindingAndValidation, CustomValidation are executed the same as if event didn't
@@ -79,9 +80,9 @@ import net.sourceforge.stripes.action.ActionBeanContext;
  * Event resolution is executed.
  * </li>
  * </ol>
- * </p>
  * <p>
  * How validation errors are handled:
+ * </p>
  * <ul>
  * <li>
  * If a validation error occurs during any stages preceding event EventHandling, WaitPage annotation will have no effects.
@@ -92,7 +93,6 @@ import net.sourceforge.stripes.action.ActionBeanContext;
  * Event can return {@link ActionBeanContext#getSourcePageResolution()}.
  * </li>
  * </ul>
- * </p>
  * <p>
  * In case the event throws an exception, you can specify an error page that the user will be forwarded to. If no error page is
  * specified, the exception will be handled by stripes (or any exception handler registered by stripes).<br>
@@ -126,24 +126,34 @@ import net.sourceforge.stripes.action.ActionBeanContext;
 public @interface WaitPage {
     /**
      * Wait page location.
+     * 
+     * @return wait page location
      */
     String path();
     /**
      * Delay in milliseconds allowed for event to complete before sending user to wait page.<br>
      * If event completes before delay is expired, the resolution returned by event will be executed directly and wait page
      * will never be shown.
+     * 
+     * @return delay in milliseconds allowed for event to complete before sending user to wait page
      */
     int delay() default 0;
     /**
      * Time between each wait page refresh in milliseconds.
+     * 
+     * @return time between each wait page refresh in milliseconds
      */
     int refresh() default 0;
     /**
      * Forward user to this page if event throws an exception.
+     * 
+     * @return forward user to this page if event throws an exception
      */
     String error() default "";
     /**
      * Page location for AJAX updater (usually used to display progression).
+     * 
+     * @return page location for AJAX updater
      */
     String ajax() default "";
 }
