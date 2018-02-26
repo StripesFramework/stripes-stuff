@@ -59,6 +59,8 @@
         </developer>
     </developers>
 
+  <!-- 
+
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/StripesFramework/stripes-stuff/issues</url>
@@ -68,8 +70,22 @@
         <developerConnection>scm:git:git@github.com:StripesFramework/stripes-stuff.git</developerConnection>
         <url>https://github.com/StripesFramework/stripes-stuff</url>
       <tag>HEAD</tag>
-  </scm>
+    </scm>
+  -->
 
+	<distributionManagement>
+	  <repository>
+		  <id>central</id>
+		  <name>tools.digitect.nl-releases</name>
+		  <url>http://tools.digitect.nl/artifactory/libs-release-local</url>
+	  </repository>
+	  <snapshotRepository>
+		  <id>snapshots</id>
+		  <name>tools.digitect.nl-snapshots</name>
+		  <url>http://tools.digitect.nl/artifactory/libs-snapshot-local</url>
+	  </snapshotRepository>
+	</distributionManagement>
+	
     <build>
         <pluginManagement>
             <plugins>
