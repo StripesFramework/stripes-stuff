@@ -4,13 +4,14 @@ A collection of plugins, extensions and integrations for the [Stripes Framework]
 
 NOTE:
 This a modified version that solves the problem that (Not)Allowed tags do not work with FreeMarker.
-There are two problems:
+When used the following message appears:
+Message: "Can't buffer body since org.stripesstuff.plugin.security.AllowedTag does not implement BodyTag."
 
-Firstly FreeMarker apparently is more strict about the tag class hierarchy than JSP and throws an Exception when using the Allowed tags with Stripes stuff version 0.5.0 or earlier. 
+This is the result of doStartTag() method of the AllowedTag returning EVAL_BODY_AGAIN if the tag "is allowed".
+This EVAL_BODY_AGAIN value is defined in the IterationTag interface and is meant only to be returned from the doAfterBody() method to indicate that a next iteration is wanted.
 
-A second problem is that the doStartTag method returns EVAL_BODY_AGAIN, which is a value specified by the IterationTag class for use by the doAfterBody() method.  A doStartTag method should return EVAL_BODY_INCLUDE instead.
-(btw. the Tag interface/class hierarchy is a bit sick actually...)
+Unfortunately EVAL_BODY_AGAIN has the same actual value as EVAL_BODY_BUFFERED, a valid return value for the doStartTag() of a BodyTag. So returning this value leads to the confusing FreeMarker error message. 
 
-Both solutions were inpired by/taken from: 
-  http://stripes-users.narkive.com/YS1xZX3m/securitymanager-throws-jsptagexception-when-using-security-allowed
-(though no reference to FreeMarker problems is made).
+Solution is to have doStartTag() return EVAL_BODY_INCLUDE, the proper return value to have the body evaluated.
+
+NOTE that this error is undoubtedly the result of the completely confusing way JSP has set up its class/interface hierarchy and return value definitions.

@@ -22,7 +22,7 @@ import net.sourceforge.stripes.util.Log;
  * @author <a href="mailto:kindop@xs4all.nl">Oscar Westra van Holthe - Kind</a>
  * @version $Id:$
  */
-public class AllowedTag extends BodyTagSupport
+public class AllowedTag extends TagSupport
 {
 	/**
 	 * Version number for serialization.
