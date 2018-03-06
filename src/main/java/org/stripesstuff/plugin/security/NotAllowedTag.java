@@ -24,6 +24,6 @@ public class NotAllowedTag
 	public int doStartTag()
 			throws JspException
 	{
-		return super.doStartTag() == SKIP_BODY ? EVAL_BODY_AGAIN : SKIP_BODY;
+		return super.doStartTag() == SKIP_BODY ? EVAL_BODY_INCLUDE : SKIP_BODY;
 	}
 }

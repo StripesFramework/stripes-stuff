@@ -3,6 +3,7 @@ package org.stripesstuff.plugin.security;
 import java.lang.reflect.Method;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import net.sourceforge.stripes.action.ActionBean;
@@ -21,8 +22,7 @@ import net.sourceforge.stripes.util.Log;
  * @author <a href="mailto:kindop@xs4all.nl">Oscar Westra van Holthe - Kind</a>
  * @version $Id:$
  */
-public class AllowedTag
-		extends TagSupport
+public class AllowedTag extends TagSupport
 {
 	/**
 	 * Version number for serialization.
@@ -159,7 +159,7 @@ public class AllowedTag
 		}
 
 		LOG.debug("Access is ", eventAllowed ? "allowed" : "denied", '.');
-		return eventAllowed ? EVAL_BODY_AGAIN : SKIP_BODY;
+		return eventAllowed ? EVAL_BODY_INCLUDE : SKIP_BODY;
 	}
 
 
